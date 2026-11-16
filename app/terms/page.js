@@ -1,6 +1,8 @@
 export const metadata = {
   title: 'Terms & Conditions — Indian Routes & Trails',
-  description: 'Terms and Conditions for Indian Routes & Trails.',
+  description: 'Terms and Conditions for Indian Routes & Trails — luxury private India tours by Om Prakash Saini.',
+  alternates: { canonical: 'https://www.indianroutesandtrails.com/terms' },
+  robots: { index: false, follow: false },
 };
 
 export default function TermsPage() {

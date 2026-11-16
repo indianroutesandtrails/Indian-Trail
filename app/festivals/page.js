@@ -2,8 +2,16 @@ import FestivalsHero from '@/sections/festivals/FestivalsHero';
 import FestivalsList from '@/sections/festivals/FestivalsList';
 
 export const metadata = {
-  title: 'Festival Calendar — Time Your Journey Around India\'s Great Celebrations',
-  description: 'Plan your India journey around Diwali, Holi, the Pushkar Camel Fair, Gangaur, Baisakhi, Onam, Mysuru Dasara, Pongal and more. Om will help you experience India at its most alive.',
+  title: 'India Festival Calendar 2025–2026 — Plan Your Journey Around Celebrations',
+  description:
+    'Diwali, Holi, Pushkar Camel Fair, Gangaur, Onam, Mysuru Dasara, Pongal and more. Plan your India journey around its greatest festivals with Om Prakash Saini, Indian Routes & Trails.',
+  alternates: { canonical: 'https://www.indianroutesandtrails.com/festivals' },
+  openGraph: {
+    title:       'India Festival Calendar 2025–2026 — Indian Routes & Trails',
+    description: 'Time your India journey around Diwali, Holi, Pushkar, Gangaur and more. Curated by Om.',
+    url:         'https://www.indianroutesandtrails.com/festivals',
+    type:        'website',
+  },
 };
 
 export default function FestivalsPage() {

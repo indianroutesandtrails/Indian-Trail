@@ -1,48 +1,83 @@
-import { tours } from '@/data/tours';
+import { tours }        from '@/data/tours';
 import { destinations } from '@/data/destinations';
-import { festivals } from '@/data/festivals';
-import { shortTrips } from '@/data/shortTrips';
+import { festivals }    from '@/data/festivals';
+import { shortTrips }   from '@/data/shortTrips';
 
-const BASE_URL = 'https://www.indianroutesandtrails.com';
+const BASE = 'https://www.indianroutesandtrails.com';
+const NOW  = new Date();
+
+/** Build hreflang alternates for a path (EN + ES — same URL, language switched client-side) */
+function alts(path) {
+  const url = `${BASE}${path}`;
+  return {
+    languages: {
+      'en':        url,
+      'es':        url,
+      'x-default': url,
+    },
+  };
+}
 
 export default function sitemap() {
-  const tourUrls = tours.map((t) => ({
-    url: `${BASE_URL}/tours/${t.slug}`,
-    lastModified: new Date(),
+  /* ── Static pages ─────────────────────────────────────────── */
+  const staticPages = [
+    { path: '',               priority: 1.0, freq: 'weekly'  },
+    { path: '/about',         priority: 0.9, freq: 'monthly' },
+    { path: '/tours',         priority: 0.95, freq: 'weekly' },
+    { path: '/short-trips',   priority: 0.85, freq: 'weekly' },
+    { path: '/destinations',  priority: 0.85, freq: 'monthly' },
+    { path: '/festivals',     priority: 0.85, freq: 'weekly'  },
+    { path: '/experiences',   priority: 0.80, freq: 'monthly' },
+    { path: '/contact',       priority: 0.90, freq: 'monthly' },
+  ].map(({ path, priority, freq }) => ({
+    url:             `${BASE}${path}`,
+    lastModified:    NOW,
+    changeFrequency: freq,
+    priority,
+    alternates:      alts(path),
+  }));
+
+  /* ── Tour detail pages ────────────────────────────────────── */
+  const tourPages = tours.map((t) => ({
+    url:             `${BASE}/tours/${t.slug}`,
+    lastModified:    NOW,
     changeFrequency: 'monthly',
-    priority: 0.9,
+    priority:        0.90,
+    alternates:      alts(`/tours/${t.slug}`),
   }));
 
-  const destUrls = destinations.map((d) => ({
-    url: `${BASE_URL}/destinations/${d.slug}`,
-    lastModified: new Date(),
+  /* ── Destination detail pages ─────────────────────────────── */
+  const destPages = destinations.map((d) => ({
+    url:             `${BASE}/destinations/${d.slug}`,
+    lastModified:    NOW,
     changeFrequency: 'monthly',
-    priority: 0.7,
+    priority:        0.75,
+    alternates:      alts(`/destinations/${d.slug}`),
   }));
 
-  const festivalUrls = festivals.map((f) => ({
-    url: `${BASE_URL}/festivals/${f.slug}`,
-    lastModified: new Date(),
+  /* ── Festival detail pages ────────────────────────────────── */
+  const festivalPages = festivals.map((f) => ({
+    url:             `${BASE}/festivals/${f.slug}`,
+    lastModified:    NOW,
     changeFrequency: 'monthly',
-    priority: 0.7,
+    priority:        0.75,
+    alternates:      alts(`/festivals/${f.slug}`),
   }));
 
-  // Short trips — one canonical URL per slug (variants handled via query params)
-  const shortTripUrls = shortTrips.map((t) => ({
-    url: `${BASE_URL}/short-trips/${t.slug}`,
-    lastModified: new Date(),
+  /* ── Short-trip detail pages ──────────────────────────────── */
+  const shortTripPages = shortTrips.map((t) => ({
+    url:             `${BASE}/short-trips/${t.slug}`,
+    lastModified:    NOW,
     changeFrequency: 'monthly',
-    priority: 0.8,
+    priority:        0.80,
+    alternates:      alts(`/short-trips/${t.slug}`),
   }));
 
-  const staticUrls = [
-    '', '/about', '/tours', '/short-trips', '/destinations', '/festivals', '/experiences', '/contact',
-  ].map((path) => ({
-    url: `${BASE_URL}${path}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly',
-    priority: path === '' ? 1.0 : 0.8,
-  }));
-
-  return [...staticUrls, ...tourUrls, ...destUrls, ...festivalUrls, ...shortTripUrls];
+  return [
+    ...staticPages,
+    ...tourPages,
+    ...destPages,
+    ...festivalPages,
+    ...shortTripPages,
+  ];
 }

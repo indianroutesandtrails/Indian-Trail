@@ -1,6 +1,8 @@
 export const metadata = {
   title: 'Privacy Policy — Indian Routes & Trails',
-  description: 'Privacy Policy for Indian Routes & Trails.',
+  description: 'Privacy Policy for Indian Routes & Trails. We are committed to protecting your personal information and never sharing it with third parties.',
+  alternates: { canonical: 'https://www.indianroutesandtrails.com/privacy' },
+  robots: { index: false, follow: false },
 };
 
 export default function PrivacyPage() {

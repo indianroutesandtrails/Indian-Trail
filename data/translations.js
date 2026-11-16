@@ -12,16 +12,19 @@ export const translations = {
       home: 'Home',
       about: 'About Om',
       tours: 'Journeys',
+      short_trips: 'Short Trips',
       destinations: 'Destinations',
+      festivals: 'Festival Calendar',
       experiences: 'Experiences',
       contact: 'Enquire',
     },
     // Hero
     hero: {
-      tagline: 'A Signature of Excellence',
-      subline: 'Exclusive India Tours by Om',
-      cta_primary: 'Explore Journeys',
-      cta_secondary: 'Meet Om',
+      tagline: 'Discover India,',
+      subline: 'Beyond the Ordinary.',
+      description: 'Private journeys shaped around culture, connection and the timeless spirit of India — crafted personally by Om for discerning travellers from around the world.',
+      cta_primary: 'Explore Our Journeys',
+      cta_secondary: 'Plan My Journey',
     },
     // Common
     common: {
@@ -117,16 +120,19 @@ export const translations = {
       home: 'Inicio',
       about: 'Sobre Om',
       tours: 'Viajes',
+      short_trips: 'Viajes Cortos',
       destinations: 'Destinos',
+      festivals: 'Calendario de Festivales',
       experiences: 'Experiencias',
       contact: 'Consultar',
     },
     // Hero
     hero: {
-      tagline: 'Un Sello de Excelencia',
-      subline: 'Viajes Exclusivos a India por Om',
-      cta_primary: 'Explorar Viajes',
-      cta_secondary: 'Conocer a Om',
+      tagline: 'Descubre India,',
+      subline: 'Más Allá de lo Ordinario.',
+      description: 'Viajes privados moldeados alrededor de la cultura, la conexión y el espíritu atemporal de India — diseñados personalmente por Om para viajeros exigentes de todo el mundo.',
+      cta_primary: 'Explorar Nuestros Viajes',
+      cta_secondary: 'Planear Mi Viaje',
     },
     // Common
     common: {

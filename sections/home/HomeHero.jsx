@@ -2,35 +2,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useId } from 'react';
 import { Search, Check, ChevronDown } from 'lucide-react';
 import { festivals } from '@/data/festivals';
 import { createPortal } from 'react-dom';
-
-/* ─────────────────────────────────────────────────────────────────
-   Option sets — values and URL keys UNCHANGED
-───────────────────────────────────────────────────────────────── */
-const FESTIVAL_OPTIONS = [
-  { value: '', label: 'Any Festival' },
-  ...festivals.map((f) => ({ value: f.slug, label: f.name.en })),
-];
-
-const DURATION_OPTIONS = [
-  { value: '',     label: 'Any Duration' },
-  { value: '1-7',  label: '1–7 days'    },
-  { value: '8-12', label: '8–12 days'   },
-  { value: '13+',  label: '13+ days'    },
-];
-
-const INTEREST_OPTIONS = [
-  { value: '',            label: 'Any Interest' },
-  { value: 'heritage',    label: 'Heritage'     },
-  { value: 'wildlife',    label: 'Wildlife'     },
-  { value: 'spiritual',   label: 'Spiritual'    },
-  { value: 'rural',       label: 'Rural Life'   },
-  { value: 'culinary',    label: 'Culinary'     },
-  { value: 'photography', label: 'Photography'  },
-];
+import { useLang } from '@/lib/LanguageContext';
 
 /* ─────────────────────────────────────────────────────────────────
    Haveli Indigo design tokens
@@ -121,8 +97,6 @@ function useDropdownPosition(triggerRef, isOpen) {
      Typeahead → match option label start
    Focus: trigger gets aria-activedescendant; option items have IDs.
 ───────────────────────────────────────────────────────────────── */
-let _heroSelectIdCounter = 0;
-
 function HeroSelect({ id, label, options, value, onChange, compact = false }) {
   const [open,       setOpen]       = useState(false);
   const [activeIdx,  setActiveIdx]  = useState(-1);
@@ -132,9 +106,10 @@ function HeroSelect({ id, label, options, value, onChange, compact = false }) {
 
   const triggerRef = useRef(null);
   const listRef    = useRef(null);
-  const baseId     = useRef(`hs-${id}-${++_heroSelectIdCounter}`);
-  const listId     = `${baseId.current}-list`;
-  const optId      = (i) => `${baseId.current}-opt-${i}`;
+  const uid        = useId();
+  const baseId     = `hs-${id}-${uid.replace(/:/g, '')}`;
+  const listId     = `${baseId}-list`;
+  const optId      = (i) => `${baseId}-opt-${i}`;
   const typeaheadBuf = useRef('');
   const typeaheadTimer = useRef(null);
 
@@ -487,9 +462,41 @@ function VDivider() {
 ───────────────────────────────────────────────────────────────── */
 function HeroSearchBar() {
   const router = useRouter();
+  const { t, lang } = useLang();
   const [festival, setFestival] = useState('');
   const [duration, setDuration] = useState('');
   const [interest, setInterest] = useState('');
+
+  /* Localised option labels */
+  const FESTIVAL_OPTIONS_L = [
+    { value: '', label: lang === 'es' ? 'Cualquier Festival' : 'Any Festival' },
+    ...festivals.map((f) => ({
+      value: f.slug,
+      label: (typeof f.name === 'object' ? (f.name[lang] ?? f.name.en) : f.name),
+    })),
+  ];
+
+  const DURATION_OPTIONS_L = [
+    { value: '',     label: lang === 'es' ? 'Cualquier Duración' : 'Any Duration' },
+    { value: '1-7',  label: lang === 'es' ? '1–7 días'   : '1–7 days'   },
+    { value: '8-12', label: lang === 'es' ? '8–12 días'  : '8–12 days'  },
+    { value: '13+',  label: lang === 'es' ? '13+ días'   : '13+ days'   },
+  ];
+
+  const INTEREST_OPTIONS_L = [
+    { value: '',            label: lang === 'es' ? 'Cualquier Interés' : 'Any Interest' },
+    { value: 'heritage',    label: lang === 'es' ? 'Patrimonio'   : 'Heritage'     },
+    { value: 'wildlife',    label: lang === 'es' ? 'Naturaleza'   : 'Wildlife'     },
+    { value: 'spiritual',   label: lang === 'es' ? 'Espiritual'   : 'Spiritual'    },
+    { value: 'rural',       label: lang === 'es' ? 'Vida Rural'   : 'Rural Life'   },
+    { value: 'culinary',    label: lang === 'es' ? 'Gastronomía'  : 'Culinary'     },
+    { value: 'photography', label: lang === 'es' ? 'Fotografía'   : 'Photography'  },
+  ];
+
+  const festivalLabel  = lang === 'es' ? 'Festival'  : 'Festival';
+  const durationLabel  = lang === 'es' ? 'Duración'  : 'Duration';
+  const interestLabel  = lang === 'es' ? 'Interés'   : 'Interest';
+  const findLabel      = lang === 'es' ? 'Buscar Mi Viaje' : 'Find My Journey';
 
   const handleGo = () => {
     const params = new URLSearchParams();
@@ -547,24 +554,24 @@ function HeroSearchBar() {
       >
         <HeroSelect
           id="hs-festival"
-          label="Festival"
-          options={FESTIVAL_OPTIONS}
+          label={festivalLabel}
+          options={FESTIVAL_OPTIONS_L}
           value={festival}
           onChange={setFestival}
         />
         <VDivider />
         <HeroSelect
           id="hs-duration"
-          label="Duration"
-          options={DURATION_OPTIONS}
+          label={durationLabel}
+          options={DURATION_OPTIONS_L}
           value={duration}
           onChange={setDuration}
         />
         <VDivider />
         <HeroSelect
           id="hs-interest"
-          label="Interest"
-          options={INTEREST_OPTIONS}
+          label={interestLabel}
+          options={INTEREST_OPTIONS_L}
           value={interest}
           onChange={setInterest}
         />
@@ -584,7 +591,7 @@ function HeroSearchBar() {
             }}
           >
             <Search size={13} aria-hidden="true" />
-            Find My Journey
+            {findLabel}
           </button>
         </div>
       </div>
@@ -597,24 +604,24 @@ function HeroSearchBar() {
         <div style={{ display: 'flex', gap: '7px', alignItems: 'stretch' }}>
           <HeroSelect
             id="hs-festival-m"
-            label="Festival"
-            options={FESTIVAL_OPTIONS}
+            label={festivalLabel}
+            options={FESTIVAL_OPTIONS_L}
             value={festival}
             onChange={setFestival}
             compact
           />
           <HeroSelect
             id="hs-duration-m"
-            label="Duration"
-            options={DURATION_OPTIONS}
+            label={durationLabel}
+            options={DURATION_OPTIONS_L}
             value={duration}
             onChange={setDuration}
             compact
           />
           <HeroSelect
             id="hs-interest-m"
-            label="Interest"
-            options={INTEREST_OPTIONS}
+            label={interestLabel}
+            options={INTEREST_OPTIONS_L}
             value={interest}
             onChange={setInterest}
             compact
@@ -630,7 +637,7 @@ function HeroSearchBar() {
             onMouseLeave={e => e.currentTarget.style.backgroundColor = 'var(--color-secondary)'}
           >
             <Search size={12} aria-hidden="true" />
-            Find My Journey
+            {findLabel}
           </button>
         </div>
       </div>
@@ -643,6 +650,7 @@ function HeroSearchBar() {
    HomeHero — unchanged
 ───────────────────────────────────────────────────────────────── */
 export default function HomeHero() {
+  const { t } = useLang();
   return (
     <section
       className="relative flex items-end overflow-hidden"
@@ -693,13 +701,13 @@ export default function HomeHero() {
                 textShadow: '0 2px 12px rgba(10,14,40,0.65), 0 1px 4px rgba(10,14,40,0.55)',
               }}
             >
-              Discover India,<br />
+              {t('hero.tagline')}<br />
               <em style={{
                 color:      'var(--color-secondary)',
                 fontStyle:  'italic',
                 textShadow: '0 2px 14px rgba(10,14,40,0.70), 0 1px 5px rgba(10,14,40,0.50)',
               }}>
-                Beyond the Ordinary.
+                {t('hero.subline')}
               </em>
             </h1>
 
@@ -711,16 +719,15 @@ export default function HomeHero() {
                 textShadow: '0 1px 8px rgba(10,14,40,0.60), 0 1px 3px rgba(10,14,40,0.45)',
               }}
             >
-              Private journeys shaped around culture, connection and the timeless spirit of India —
-              crafted personally by Om for discerning travellers from around the world.
+              {t('hero.description')}
             </p>
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <Link href="/tours" className="btn-hero-primary">
-                Explore Our Journeys
+                {t('hero.cta_primary')}
               </Link>
               <Link href="/contact" className="btn-hero-ghost">
-                Plan My Journey
+                {t('hero.cta_secondary')}
               </Link>
             </div>
           </div>

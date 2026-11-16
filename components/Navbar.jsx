@@ -4,19 +4,21 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Logo from './Logo';
 import { Menu, X } from 'lucide-react';
+import { useLang } from '@/lib/LanguageContext';
 
 const NAV_LINKS = [
-  { href: '/',             label: 'Home' },
-  { href: '/about',        label: 'About Om' },
-  { href: '/tours',        label: 'Journeys' },
-  { href: '/short-trips',  label: 'Short Trips' },
-  { href: '/destinations', label: 'Destinations' },
-  { href: '/festivals',    label: 'Festival Calendar' },
-  { href: '/experiences',  label: 'Experiences' },
+  { href: '/',             key: 'nav.home'         },
+  { href: '/about',        key: 'nav.about'        },
+  { href: '/tours',        key: 'nav.tours'        },
+  { href: '/short-trips',  key: 'nav.short_trips'  },
+  { href: '/destinations', key: 'nav.destinations' },
+  { href: '/festivals',    key: 'nav.festivals'    },
+  { href: '/experiences',  key: 'nav.experiences'  },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { lang, setLang, t } = useLang();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -73,13 +75,12 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <nav className="hidden lg:flex items-center gap-7" aria-label="Main navigation">
-          {NAV_LINKS.map(({ href, label }) => {
+          {NAV_LINKS.map(({ href, key }) => {
             const isActive = pathname === href || pathname.startsWith(href + '/');
             const col = isActive ? activeCol : inactiveCol;
-            /* text-shadow: soft dark on light header, soft light on transparent/dark hero */
             const shadow = transparent
-              ? '0 1px 4px rgba(0,0,0,0.45)'   /* on dark image: light readability boost */
-              : '0 1px 2px rgba(20,20,43,0.12)'; /* on light bg: subtle depth */
+              ? '0 1px 4px rgba(0,0,0,0.45)'
+              : '0 1px 2px rgba(20,20,43,0.12)';
 
             return (
               <Link
@@ -89,7 +90,7 @@ export default function Navbar() {
                 style={{ color: col, fontWeight: 500, textShadow: shadow }}
                 aria-current={isActive ? 'page' : undefined}
               >
-                {label}
+                {t(key)}
                 <span
                   className="absolute bottom-0 left-0 h-px transition-all duration-300"
                   style={{
@@ -102,7 +103,7 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Right: Enquire button */}
+        {/* Right: Enquire button only — EN/ES is a fixed left-side tab on desktop */}
         <div className="hidden lg:flex items-center gap-4">
           <Link
             href="/contact"
@@ -159,7 +160,7 @@ export default function Navbar() {
         aria-hidden={!open}
       >
         <div className="container-luxury py-5 flex flex-col gap-0.5">
-          {NAV_LINKS.map(({ href, label }) => {
+          {NAV_LINKS.map(({ href, key }) => {
             const isActive = pathname === href || pathname.startsWith(href + '/');
             return (
               <Link
@@ -172,7 +173,7 @@ export default function Navbar() {
                   borderBottom: '1px solid var(--color-border)',
                 }}
               >
-                {label}
+                {t(key)}
               </Link>
             );
           })}
@@ -182,10 +183,36 @@ export default function Navbar() {
             className="font-sans text-sm tracking-[0.12em] uppercase py-3"
             style={{ color: 'var(--color-text-muted)', borderBottom: '1px solid var(--color-border)' }}
           >
-            Contact
+            {t('nav.contact')}
           </Link>
 
-          <div className="flex items-center justify-end pt-4 mt-1">
+          <div className="flex items-center justify-between pt-4 mt-1">
+            {/* Language switcher — mobile */}
+            <div className="flex items-center gap-2" role="group" aria-label="Language selection">
+              {['en', 'es'].map((l, i) => (
+                <span key={l} className="flex items-center gap-2">
+                  {i > 0 && (
+                    <span className="text-xs text-gray-300 select-none" aria-hidden="true">|</span>
+                  )}
+                  <button
+                    onClick={() => { setLang(l); setOpen(false); }}
+                    aria-pressed={lang === l}
+                    className="font-sans text-xs tracking-[0.15em] uppercase transition-colors duration-200"
+                    style={{
+                      color:      lang === l ? 'var(--color-primary)' : 'var(--color-text-muted)',
+                      fontWeight: lang === l ? 600 : 400,
+                      background: 'none',
+                      border:     'none',
+                      cursor:     'pointer',
+                      padding:    '2px 0',
+                    }}
+                  >
+                    {l.toUpperCase()}
+                  </button>
+                </span>
+              ))}
+            </div>
+
             <Link
               href="/contact"
               className="font-sans text-xs tracking-[0.18em] uppercase px-5 py-2.5"

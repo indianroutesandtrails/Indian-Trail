@@ -79,7 +79,7 @@ const TIMEZONES = [
 
 function buildWhatsAppMsg(form) {
   return encodeURIComponent(
-    `Hi Om! I'd like to book a FREE video consultation.\n\n` +
+    `Hi Om! I'd like to book a FREE 10-minute video consultation.\n\n` +
     `Name: ${form.name}\n` +
     `Email: ${form.email}\n` +
     `Phone: ${form.phone || '—'}\n` +
@@ -219,7 +219,7 @@ export default function VideoConsultDrawer({ open, onClose, triggerRef, id }) {
                 fontSize: '11px', color: 'var(--color-secondary)',
                 margin: '2px 0 0', fontWeight: 500, letterSpacing: '0.04em',
               }}>
-                ✦ First call is completely free
+                ✦ First call is completely free — 10 mins
               </p>
             </div>
           </div>
@@ -302,7 +302,7 @@ export default function VideoConsultDrawer({ open, onClose, triggerRef, id }) {
                 fontSize: '12px', color: 'var(--color-text-muted)',
                 margin: 0, lineHeight: 1.6,
               }}>
-                Book a <strong style={{ color: 'var(--color-text)' }}>free 30-minute video call</strong> with Om
+                Book a <strong style={{ color: 'var(--color-text)' }}>free 10-minute video call</strong> with Om
                 to discuss your India journey. Available via Google Meet, Zoom, or WhatsApp Video.
               </p>
             </div>

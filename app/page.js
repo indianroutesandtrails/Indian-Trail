@@ -6,6 +6,7 @@ import HomeDestinations from '@/sections/home/HomeDestinations';
 import HomeTestimonials from '@/sections/home/HomeTestimonials';
 import HomeAboutTeaser from '@/sections/home/HomeAboutTeaser';
 import HomeWhyUs from '@/sections/home/HomeWhyUs';
+import HomeGallery from '@/sections/home/HomeGallery';
 import HomeResponsible from '@/sections/home/HomeResponsible';
 import HomeCTA from '@/sections/home/HomeCTA';
 
@@ -35,6 +36,7 @@ export default function HomePage() {
       <HomeDestinations />
       <HomeTestimonials />
       <HomeWhyUs />
+      <HomeGallery />
       <HomeResponsible />
       <HomeCTA />
     </>

@@ -1,10 +1,12 @@
 'use client';
 import { omStory } from '@/data/siteContent';
 import { Star, Globe, BookOpen, Gem, MapPin, Users } from 'lucide-react';
+import { useLang } from '@/lib/LanguageContext';
 
 const icons = [Star, Globe, BookOpen, Gem, MapPin, Users];
 
 export default function AboutExpertise() {
+  const { t } = useLang();
   return (
     <section
       style={{
@@ -14,10 +16,8 @@ export default function AboutExpertise() {
       }}
     >
       <div className="container-luxury">
-        <p className="eyebrow mb-3">Expertise</p>
-        <h2 className="section-title mb-2">
-          My Experience &amp; Expertise
-        </h2>
+        <p className="eyebrow mb-3">{t('about_expertise.eyebrow')}</p>
+        <h2 className="section-title mb-2">{t('about_expertise.heading')}</h2>
         <div className="divider-gold mb-10" />
 
         <div

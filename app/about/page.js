@@ -3,6 +3,7 @@ import AboutStory from '@/sections/about/AboutStory';
 import AboutExpertise from '@/sections/about/AboutExpertise';
 import AboutPhilosophy from '@/sections/about/AboutPhilosophy';
 import AboutWhereIGuide from '@/sections/about/AboutWhereIGuide';
+import AboutGallery from '@/sections/about/AboutGallery';
 import AboutClosing from '@/sections/about/AboutClosing';
 
 export const metadata = {
@@ -26,6 +27,7 @@ export default function AboutPage() {
       <AboutExpertise />
       <AboutPhilosophy />
       <AboutWhereIGuide />
+      <AboutGallery />
       <AboutClosing />
     </>
   );

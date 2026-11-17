@@ -1,7 +1,9 @@
 'use client';
 import Image from 'next/image';
+import { useLang } from '@/lib/LanguageContext';
 
 export default function AboutHero() {
+  const { t } = useLang();
   return (
     <section
       style={{
@@ -22,14 +24,14 @@ export default function AboutHero() {
           style={{ background: 'linear-gradient(to right, rgba(20,34,77,0.55) 0%, transparent 60%)' }} />
       </div>
       <div className="relative container-luxury pb-16">
-        <p className="eyebrow mb-4" style={{ color: 'var(--color-secondary)' }}>Our Story</p>
+        <p className="eyebrow mb-4" style={{ color: 'var(--color-secondary)' }}>{t('about_hero.eyebrow')}</p>
         <h1 className="display-title leading-none" style={{ color: 'var(--color-text-invert)' }}>
-          The Man Behind<br />
-          <em className="font-light" style={{ color: 'var(--color-secondary)' }}>Every Journey</em>
+          {t('about_hero.heading1')}<br />
+          <em className="font-light" style={{ color: 'var(--color-secondary)' }}>{t('about_hero.heading2')}</em>
         </h1>
         <p className="mt-5 font-sans font-light max-w-xl"
           style={{ color: 'rgba(255,255,255,0.62)', fontSize: '1.05rem' }}>
-          A guide, a storyteller, a cultural bridge — and the heart of Indian Routes &amp; Trails.
+          {t('about_hero.subtitle')}
         </p>
       </div>
     </section>

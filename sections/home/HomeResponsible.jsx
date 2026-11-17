@@ -1,8 +1,10 @@
 'use client';
 import Image from 'next/image';
 import { responsibleTourism } from '@/data/siteContent';
+import { useLang } from '@/lib/LanguageContext';
 
 export default function HomeResponsible() {
+  const { t } = useLang();
   return (
     /*
       Unified white section — outer background, image column and text column
@@ -87,14 +89,14 @@ export default function HomeResponsible() {
                 </svg>
               </div>
               <p className="eyebrow" style={{ color: 'var(--color-primary)' }}>
-                Responsible Tourism
+                {t('home_responsible.eyebrow')}
               </p>
             </div>
 
             <h2 className="section-title mb-4">
-              Travel with<br />
+              {t('home_responsible.heading1')}<br />
               <em className="font-light" style={{ color: 'var(--color-primary-light)' }}>
-                Conscience
+                {t('home_responsible.heading2')}
               </em>
             </h2>
 

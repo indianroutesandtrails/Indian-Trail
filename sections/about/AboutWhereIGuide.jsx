@@ -1,8 +1,10 @@
 'use client';
 import { omStory } from '@/data/siteContent';
 import { MapPin } from 'lucide-react';
+import { useLang } from '@/lib/LanguageContext';
 
 export default function AboutWhereIGuide() {
+  const { t } = useLang();
   return (
     <section
       style={{
@@ -16,11 +18,11 @@ export default function AboutWhereIGuide() {
 
           {/* heading col */}
           <div className="lg:col-span-4">
-            <p className="eyebrow mb-3">Coverage</p>
+            <p className="eyebrow mb-3">{t('about_where.eyebrow')}</p>
             <h2 className="section-title mb-4">
-              From the Taj<br />
+              {t('about_where.heading1')}<br />
               <em className="font-light" style={{ color: 'var(--color-primary-light)' }}>
-                to the Backwaters
+                {t('about_where.heading2')}
               </em>
             </h2>
             <div className="divider-gold" />

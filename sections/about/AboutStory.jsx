@@ -2,8 +2,10 @@
 import Image from 'next/image';
 import { omStory } from '@/data/siteContent';
 import { CheckCircle } from 'lucide-react';
+import { useLang } from '@/lib/LanguageContext';
 
 export default function AboutStory() {
+  const { t } = useLang();
   return (
     <section
       style={{
@@ -17,8 +19,8 @@ export default function AboutStory() {
 
           {/* ── story text ── */}
           <div className="lg:col-span-7 order-2 lg:order-1">
-            <p className="eyebrow mb-2">My Story</p>
-            <h2 className="section-title mb-3">My Story</h2>
+            <p className="eyebrow mb-2">{t('about_story.eyebrow')}</p>
+            <h2 className="section-title mb-3">{t('about_story.heading')}</h2>
             <div className="divider-gold mb-6" />
 
             <div className="space-y-5">
@@ -65,7 +67,7 @@ export default function AboutStory() {
               </p>
               <footer className="font-sans text-[10px] tracking-[0.25em] uppercase mt-3"
                 style={{ color: 'var(--color-secondary)' }}>
-                — Om, Founder
+                {t('about_story.founder')}
               </footer>
             </blockquote>
           </div>
@@ -107,10 +109,10 @@ export default function AboutStory() {
                     }
                   `}</style>
                   <Image
-                    src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800&q=85"
-                    alt="Amber Fort, Jaipur — Indian Routes & Trails"
+                    src="/Owner's-Pic/man-standing-teatro-nacional-san-jose-costa-rica.webp"
+                    alt="Om Prakash Saini — Indian Routes & Trails"
                     fill
-                    className="object-cover"
+                    className="object-cover object-center"
                     sizes="(max-width:1024px) 100vw, 32vw"
                   />
                 </div>
@@ -125,7 +127,7 @@ export default function AboutStory() {
                 }}>
                 <h3 className="font-sans text-[10px] tracking-[0.25em] uppercase mb-3"
                   style={{ color: 'var(--color-text-muted)' }}>
-                  Experience &amp; Expertise
+                  {t('about_story.experience')}
                 </h3>
                 <ul className="space-y-2">
                   {omStory.credentials.map((cred, i) => (

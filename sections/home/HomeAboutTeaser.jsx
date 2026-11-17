@@ -3,16 +3,18 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { omStory } from '@/data/siteContent';
 import { ArrowRight } from 'lucide-react';
-
-/* ── 4 stats ─────────────────────────────────────────────────────── */
-const STATS = [
-  { value: '38+', label: 'Years', sub: 'Guiding excellence across India, since 1988' },
-  { value: 'GOI', label: 'Authorised', sub: 'PAN-India guide, Ministry of Tourism' },
-  { value: 'ES', label: 'Spanish-Speaking Specialist', sub: 'For travellers from Spain & Latin America' },
-  { value: '✦', label: 'Master Storyteller', sub: 'History, art, culture & heritage' },
-];
+import { useLang } from '@/lib/LanguageContext';
 
 export default function HomeAboutTeaser() {
+  const { t } = useLang();
+
+  const STATS = [
+    { value: '38+', label: t('home_about.stat_years_label'), sub: t('home_about.stat_years_sub') },
+    { value: 'GOI', label: t('home_about.stat_auth_label'),  sub: t('home_about.stat_auth_sub')  },
+    { value: 'ES',  label: t('home_about.stat_es_label'),    sub: t('home_about.stat_es_sub')    },
+    { value: '✦',   label: t('home_about.stat_story_label'), sub: t('home_about.stat_story_sub') },
+  ];
+
   return (
     <section className="section-padding overflow-hidden" style={{ backgroundColor: 'var(--color-bg)' }}>
       <div className="container-luxury">
@@ -23,9 +25,9 @@ export default function HomeAboutTeaser() {
             <div className="relative h-[500px] lg:h-full overflow-hidden"
               style={{ borderRadius: 'var(--radius-card)' }}>
               <Image
-                src="https://images.unsplash.com/photo-1587474260584-136574528ed5?w=1000&q=85"
-                alt="Om Prakash Saini — Indian Routes & Trails"
-                fill className="object-cover"
+                src="/Owner's-Pic/Om-Prakesh.webp"
+                alt="Om Prakash Saini — Founder & Master Guide, Indian Routes & Trails"
+                fill className="object-cover object-top"
                 sizes="(max-width: 1024px) 100vw, 42vw"
               />
             </div>
@@ -49,11 +51,11 @@ export default function HomeAboutTeaser() {
 
           {/* ── Text column ── */}
           <div className="lg:col-span-7 lg:pl-16 xl:pl-24 flex flex-col justify-center">
-            <p className="eyebrow mb-4">Our Story</p>
+            <p className="eyebrow mb-4">{t('home_about.eyebrow')}</p>
             <h2 className="section-title mb-5">
-              The Man Behind<br />
+              {t('home_about.heading1')}<br />
               <em className="font-light" style={{ color: 'var(--color-primary-light)' }}>
-                Every Journey
+                {t('home_about.heading2')}
               </em>
             </h2>
             <div className="divider-gold mb-7" />
@@ -106,7 +108,7 @@ export default function HomeAboutTeaser() {
               href="/about"
               className="btn-link-secondary group inline-flex items-center gap-3 self-start"
             >
-              Read My Story
+              {t('home_about.read_more')}
               <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1.5" />
             </Link>
           </div>

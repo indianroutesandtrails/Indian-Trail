@@ -3,26 +3,28 @@ import Link from 'next/link';
 import { siteConfig } from '@/data/siteContent';
 import Logo from './Logo';
 import { Mail, Phone, MapPin, MessageCircle, ArrowRight } from 'lucide-react';
+import { useLang } from '@/lib/LanguageContext';
 
-const NAV_LINKS = [
-  { href: '/',              label: 'Home' },
-  { href: '/about',         label: 'About Om' },
-  { href: '/tours',         label: 'Journeys' },
-  { href: '/destinations',  label: 'Destinations' },
-  { href: '/festivals',     label: 'Festival Calendar' },
-  { href: '/experiences',   label: 'Experiences' },
-  { href: '/contact',       label: 'Contact' },
+const NAV_LINKS_KEYS = [
+  { href: '/',              key: 'nav.home'         },
+  { href: '/about',         key: 'nav.about'        },
+  { href: '/tours',         key: 'nav.tours'        },
+  { href: '/destinations',  key: 'nav.destinations' },
+  { href: '/festivals',     key: 'nav.festivals'    },
+  { href: '/experiences',   key: 'nav.experiences'  },
+  { href: '/contact',       key: 'nav.contact'      },
 ];
 
 const FESTIVAL_LINKS = [
-  { href: '/festivals/holi',                     label: 'Holi' },
-  { href: '/festivals/diwali',                   label: 'Diwali' },
-  { href: '/festivals/pushkar-camel-fair',       label: 'Pushkar Camel Fair' },
-  { href: '/festivals/dev-deepawali',            label: 'Dev Deepawali' },
+  { href: '/festivals/holi',                          label: 'Holi' },
+  { href: '/festivals/diwali',                        label: 'Diwali' },
+  { href: '/festivals/pushkar-camel-fair',            label: 'Pushkar Camel Fair' },
+  { href: '/festivals/dev-deepawali',                 label: 'Dev Deepawali' },
   { href: '/festivals/makar-sankranti-kite-festival', label: 'Makar Sankranti' },
 ];
 
 export default function Footer() {
+  const { t } = useLang();
   return (
     <footer style={{ backgroundColor: 'var(--color-primary-dark)' }}>
       <div className="container-luxury py-16 md:py-20">
@@ -35,14 +37,14 @@ export default function Footer() {
             </Link>
             <p className="font-sans text-sm font-light leading-relaxed max-w-xs"
               style={{ color: 'var(--color-text-invert-muted)' }}>
-              Curated luxury journeys across India — where heritage meets authenticity and every itinerary is a hand-woven masterpiece.
+              {t('footer.tagline')}
             </p>
             <Link href="/contact"
               className="group inline-flex items-center gap-2 mt-7 font-sans text-xs tracking-[0.2em] uppercase"
               style={{ color: 'var(--color-secondary)' }}
               onMouseEnter={e => e.currentTarget.style.color = 'var(--color-secondary-hover)'}
               onMouseLeave={e => e.currentTarget.style.color = 'var(--color-secondary)'}>
-              Plan My Journey
+              {t('footer.plan_journey_link')}
               <ArrowRight size={12} className="transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </div>
@@ -51,17 +53,17 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <h4 className="font-sans text-[10px] tracking-[0.25em] uppercase mb-6"
               style={{ color: 'var(--color-text-invert-muted)' }}>
-              Navigate
+              {t('footer.navigate')}
             </h4>
             <ul className="space-y-3">
-              {NAV_LINKS.map((link) => (
+              {NAV_LINKS_KEYS.map((link) => (
                 <li key={link.href}>
                   <Link href={link.href}
                     className="font-sans text-sm transition-colors duration-300"
                     style={{ color: 'rgba(255,255,255,0.42)' }}
                     onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.85)'}
                     onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.42)'}>
-                    {link.label}
+                    {t(link.key)}
                   </Link>
                 </li>
               ))}
@@ -72,7 +74,7 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <h4 className="font-sans text-[10px] tracking-[0.25em] uppercase mb-6"
               style={{ color: 'var(--color-text-invert-muted)' }}>
-              Festivals
+              {t('footer.festivals_label')}
             </h4>
             <ul className="space-y-3">
               {FESTIVAL_LINKS.map((link) => (
@@ -93,7 +95,7 @@ export default function Footer() {
           <div className="lg:col-span-4">
             <h4 className="font-sans text-[10px] tracking-[0.25em] uppercase mb-6"
               style={{ color: 'var(--color-text-invert-muted)' }}>
-              Get in Touch
+              {t('footer.get_in_touch')}
             </h4>
             <ul className="space-y-4">
               {siteConfig.contact.emails.map((email) => (
@@ -145,18 +147,20 @@ export default function Footer() {
       {/* Bottom bar */}
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
         <div className="container-luxury py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          {/* Dynamic copyright year — never hardcoded */}
           <p className="font-sans text-xs" style={{ color: 'rgba(255,255,255,0.22)' }}>
-            &copy; {new Date().getFullYear()} Indian Routes &amp; Trails. All rights reserved.
+            {t('footer.rights')}
           </p>
           <div className="flex items-center gap-6">
-            {[{ href: '/privacy', label: 'Privacy Policy' }, { href: '/terms', label: 'Terms' }].map(l => (
+            {[
+              { href: '/privacy', key: 'footer.privacy' },
+              { href: '/terms',   key: 'footer.terms'   },
+            ].map(l => (
               <Link key={l.href} href={l.href}
                 className="font-sans text-xs transition-colors"
                 style={{ color: 'rgba(255,255,255,0.22)' }}
                 onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.55)'}
                 onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.22)'}>
-                {l.label}
+                {t(l.key)}
               </Link>
             ))}
           </div>

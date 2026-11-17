@@ -4,6 +4,7 @@ import { whyChooseUs } from '@/data/siteContent';
 import { Globe, Star, Heart, Shield, Users, Map } from 'lucide-react';
 import { useCarousel } from '@/hooks/useCarousel';
 import { CarouselDots } from '@/sections/home/HomeTours';
+import { useLang } from '@/lib/LanguageContext';
 
 const iconMap = { globe: Globe, star: Star, heart: Heart, shield: Shield, users: Users, map: Map };
 
@@ -87,6 +88,7 @@ function WhyCard({ item }) {
 export default function HomeWhyUs() {
   const isMobile = useIsMobile();
   const { index, goTo, touchHandlers } = useCarousel(whyChooseUs.length, 1);
+  const { t } = useLang();
 
   return (
     <section className="section-padding" style={{ backgroundColor: 'var(--color-surface-tint)' }}>
@@ -95,18 +97,15 @@ export default function HomeWhyUs() {
         {/* header */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 mb-10 items-end">
           <div>
-            <p className="eyebrow mb-3">The Art of Slow Travel</p>
+            <p className="eyebrow mb-3">{t('home_why.eyebrow')}</p>
             <h2 className="section-title">
-              Travel as It Was<br />
+              {t('home_why.heading1')}<br />
               <em className="font-light" style={{ color: 'var(--color-primary-light)' }}>
-                Always Meant to Be
+                {t('home_why.heading2')}
               </em>
             </h2>
           </div>
-          <p className="body-large">
-            Om offers what no generic tour can — exclusive cultural access, the rare gift of being
-            truly understood as a traveller, and journeys that stay with you long after you return home.
-          </p>
+          <p className="body-large">{t('home_why.body')}</p>
         </div>
 
         {/* desktop: 3-col grid */}

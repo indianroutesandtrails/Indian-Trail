@@ -3,8 +3,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { siteConfig } from '@/data/siteContent';
 import { MessageCircle, Mail } from 'lucide-react';
+import { useLang } from '@/lib/LanguageContext';
 
 export default function HomeCTA() {
+  const { t } = useLang();
   return (
     <section className="relative min-h-[460px] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0">
@@ -18,22 +20,21 @@ export default function HomeCTA() {
       </div>
 
       <div className="relative container-narrow text-center py-20">
-        <p className="eyebrow mb-5" style={{ color: 'var(--color-secondary)' }}>Begin Your Journey</p>
+        <p className="eyebrow mb-5" style={{ color: 'var(--color-secondary)' }}>{t('home_cta.eyebrow')}</p>
 
         <h2 className="font-serif font-light mb-5"
           style={{ fontSize: 'clamp(2rem,5vw,3.5rem)', lineHeight: 1.15, color: 'var(--color-text-invert)' }}>
-          Your India Journey<br />
-          <em style={{ color: 'var(--color-secondary)' }}>Begins Here.</em>
+          {t('home_cta.heading1')}<br />
+          <em style={{ color: 'var(--color-secondary)' }}>{t('home_cta.heading2')}</em>
         </h2>
 
         <p className="font-sans font-light mb-10 max-w-lg mx-auto"
           style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1rem' }}>
-          Every conversation with Om begins with listening. Share your vision — he will craft an experience
-          that transcends the ordinary.
+          {t('home_cta.body')}
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
-          <Link href="/contact" className="btn-hero-primary">Plan My Journey</Link>
+          <Link href="/contact" className="btn-hero-primary">{t('home_cta.primary')}</Link>
           <Link
             href="/tours"
             className="inline-flex items-center gap-2 font-sans text-xs tracking-[0.2em] uppercase px-8 py-3.5 transition-all duration-300"
@@ -45,7 +46,7 @@ export default function HomeCTA() {
             onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; }}
             onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
           >
-            Explore Journeys
+            {t('home_cta.secondary')}
           </Link>
         </div>
 

@@ -1,39 +1,24 @@
 'use client';
 import Image from 'next/image';
-
-const pts = [
-  {
-    title: 'Not a Tour Group — A Personal Guest',
-    body: 'You are an honoured guest, not a number on a roster. Every journey I design is built around you — your pace, your curiosity and your desire to connect with the real India.',
-  },
-  {
-    title: 'Ultra-Luxury Meets Authentic India',
-    body: 'From palace hotels to hidden village experiences, I balance the finest comforts with genuine, unfiltered Indian life. Nothing is generic — everything is personal.',
-  },
-  {
-    title: 'A Cultural Bridge',
-    body: 'I take special dedication in guiding Spanish-speaking travellers, so that you feel entirely at ease while discovering India — translating not just words, but nuances, philosophies and shared human emotions.',
-  },
-  {
-    title: 'Built on Trust',
-    body: 'I believe the finest journeys are built on trust, knowledge, professionalism and genuine hospitality. These are the values that have guided every journey I have led since 1988.',
-  },
-];
-
-/*
-  All four images use the same aspect-ratio (4/3) and border-radius
-  so they sit in a uniform 2×2 grid with even gaps.
-  4/3 (landscape) suits travel photography better than the previous
-  mixed 3/4 + 1/1 combination that caused uneven heights.
-*/
-const galleryImages = [
-  { src: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=700&q=80',  alt: 'Taj Mahal, Agra — Indian Routes & Trails'        },
-  { src: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=700&q=80', alt: 'Landscape, Rajasthan — Indian Routes & Trails'    },
-  { src: 'https://images.unsplash.com/photo-1567157577867-05ccb1388e66?w=700&q=80', alt: 'Lake Pichola, Udaipur — Indian Routes & Trails'   },
-  { src: 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=700&q=80', alt: 'Amber Fort, Jaipur — Indian Routes & Trails'       },
-];
+import { useLang } from '@/lib/LanguageContext';
 
 export default function AboutPhilosophy() {
+  const { t } = useLang();
+
+  const pts = [
+    { title: t('about_philosophy.pt1_title'), body: t('about_philosophy.pt1_body') },
+    { title: t('about_philosophy.pt2_title'), body: t('about_philosophy.pt2_body') },
+    { title: t('about_philosophy.pt3_title'), body: t('about_philosophy.pt3_body') },
+    { title: t('about_philosophy.pt4_title'), body: t('about_philosophy.pt4_body') },
+  ];
+
+  const galleryImages = [
+    { src: "https://images.unsplash.com/photo-1548013146-72479768bada?w=700&q=80",  alt: 'Taj Mahal, Agra — Indian Routes & Trails'       },
+    { src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=700&q=80", alt: 'Landscape, Rajasthan — Indian Routes & Trails'  },
+    { src: "https://images.unsplash.com/photo-1567157577867-05ccb1388e66?w=700&q=80", alt: 'Lake Pichola, Udaipur — Indian Routes & Trails' },
+    { src: "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=700&q=80", alt: 'Amber Fort, Jaipur — Indian Routes & Trails'    },
+  ];
+
   return (
     <section className="section-padding" style={{ backgroundColor: 'var(--color-surface-alt)' }}>
       <div className="container-luxury">
@@ -41,11 +26,11 @@ export default function AboutPhilosophy() {
 
           {/* Philosophy points */}
           <div>
-            <p className="eyebrow mb-5">Philosophy</p>
+            <p className="eyebrow mb-5">{t('about_philosophy.eyebrow')}</p>
             <h2 className="section-title mb-6">
-              My Philosophy of<br />
+              {t('about_philosophy.heading1')}<br />
               <em className="font-light" style={{ color: 'var(--color-primary-light)' }}>
-                Transformative Travel
+                {t('about_philosophy.heading2')}
               </em>
             </h2>
             <div className="divider-gold mb-10" />

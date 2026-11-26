@@ -5,7 +5,7 @@ import { CheckCircle } from 'lucide-react';
 import { useLang } from '@/lib/LanguageContext';
 
 export default function AboutStory() {
-  const { t } = useLang();
+  const { t, localized } = useLang();
   return (
     <section
       style={{
@@ -34,7 +34,7 @@ export default function AboutStory() {
                 lineHeight: 1.7,
                 margin: 0,
               }}>
-                {omStory.story[0]}
+                {localized(omStory.story[0])}
               </p>
 
               {/* ¶2 – ¶5 */}
@@ -47,7 +47,7 @@ export default function AboutStory() {
                   lineHeight: 1.75,
                   margin: 0,
                 }}>
-                  {para}
+                  {localized(para)}
                 </p>
               ))}
             </div>
@@ -63,7 +63,7 @@ export default function AboutStory() {
             >
               <p className="font-serif italic font-light leading-relaxed"
                 style={{ color: 'var(--color-text)', fontSize: '1rem', margin: 0 }}>
-                &ldquo;{omStory.pullQuote}&rdquo;
+                &ldquo;{localized(omStory.pullQuote)}&rdquo;
               </p>
               <footer className="font-sans text-[10px] tracking-[0.25em] uppercase mt-3"
                 style={{ color: 'var(--color-secondary)' }}>
@@ -81,7 +81,7 @@ export default function AboutStory() {
                 style={{ backgroundColor: 'var(--color-primary)', borderRadius: 'var(--radius-card)' }}>
                 <p className="font-serif italic font-light leading-snug mb-3"
                   style={{ color: 'var(--color-text-invert)', fontSize: '1rem' }}>
-                  &ldquo;{omStory.quote}&rdquo;
+                  &ldquo;{localized(omStory.quote)}&rdquo;
                 </p>
                 <p className="font-sans text-[10px] tracking-[0.25em] uppercase"
                   style={{ color: 'var(--color-secondary)' }}>
@@ -136,7 +136,7 @@ export default function AboutStory() {
                         style={{ color: 'var(--color-primary)' }} />
                       <span className="font-sans text-xs font-light leading-relaxed"
                         style={{ color: 'var(--color-text-muted)' }}>
-                        {cred}
+                        {localized(cred)}
                       </span>
                     </li>
                   ))}

@@ -2,8 +2,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, Clock, ArrowRight } from 'lucide-react';
+import { useLang } from '@/lib/LanguageContext';
 
 export default function TourCard({ tour }) {
+  const { localized, t, lang } = useLang();
   return (
     <article
       className="group flex flex-col h-full transition-all duration-400"
@@ -25,7 +27,7 @@ export default function TourCard({ tour }) {
       <div className="relative overflow-hidden" style={{ height: '210px', borderRadius: 'var(--radius-card) var(--radius-card) 0 0' }}>
         <Image
           src={tour.featuredImage}
-          alt={`${tour.title} — Indian Routes & Trails`}
+          alt={`${localized(tour.title)} — Indian Routes & Trails`}
           fill
           className="object-cover"
           style={{ transition: `transform var(--motion-image-hover)` }}
@@ -41,7 +43,7 @@ export default function TourCard({ tour }) {
             color: '#fff',
             borderRadius: 'var(--radius-pill)',
           }}>
-          <Clock size={9} /> {tour.duration} Days
+          <Clock size={9} /> {tour.duration} {t('common.days')}
         </div>
       </div>
 
@@ -53,7 +55,7 @@ export default function TourCard({ tour }) {
         </p>
         <h3 className="font-serif text-lg font-light leading-snug mb-3"
           style={{ color: 'var(--color-text)' }}>
-          {tour.title}
+          {localized(tour.title)}
         </h3>
         <div className="flex items-start gap-1.5 mb-4">
           <MapPin size={11} className="shrink-0 mt-0.5"
@@ -70,7 +72,7 @@ export default function TourCard({ tour }) {
                 style={{ backgroundColor: 'var(--color-secondary)' }} />
               <span className="font-sans text-[11px] leading-relaxed"
                 style={{ color: 'var(--color-text-muted)' }}>
-                {h}
+                {localized(h)}
               </span>
             </li>
           ))}
@@ -81,7 +83,7 @@ export default function TourCard({ tour }) {
           style={{ borderTop: '1px solid var(--color-border)' }}>
           <span className="font-sans text-[10px] tracking-[0.2em] uppercase transition-colors"
             style={{ color: 'var(--color-text-muted)' }}>
-            Explore Journey
+            {lang === 'es' ? 'Explorar Viaje' : 'Explore Journey'}
           </span>
           <ArrowRight size={14}
             className="transition-transform duration-300 group-hover/cta:translate-x-1"

@@ -5,8 +5,7 @@ import Image from 'next/image';
 import { tours } from '@/data/tours';
 import { useCarousel } from '@/hooks/useCarousel';
 import { Clock, MapPin, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
-
-/* ── responsive perView ──────────────────────────────────────────── */
+import { useLang } from '@/lib/LanguageContext';
 function usePerView() {
   const [perView, setPerView] = useState(3);
   useEffect(() => {
@@ -54,11 +53,12 @@ export function CarouselDots({ total, active, onDotClick, className = '' }) {
 /* ── tour card ───────────────────────────────────────────────────── */
 function TourCard({ tour }) {
   const [hov, setHov] = useState(false);
+  const { localized, lang } = useLang();
 
   return (
     <Link
       href={`/tours/${tour.slug}`}
-      aria-label={tour.title}
+      aria-label={localized(tour.title)}
       style={{
         display:         'block',
         position:        'relative',
@@ -79,7 +79,7 @@ function TourCard({ tour }) {
       <div style={{ position: 'absolute', inset: 0, borderRadius: 'var(--radius-card)', overflow: 'hidden' }}>
         <Image
           src={tour.featuredImage}
-          alt={`${tour.title} — Indian Routes & Trails`}
+          alt={`${localized(tour.title)} — Indian Routes & Trails`}
           fill
           className="object-cover"
           style={{
@@ -127,7 +127,7 @@ function TourCard({ tour }) {
           fontSize: '1.1rem', fontWeight: 300,
           color: 'var(--color-text-invert)', lineHeight: 1.2, margin: '0 0 8px',
         }}>
-          {tour.title}
+          {localized(tour.title)}
         </h3>
 
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '5px', marginBottom: '10px' }}>
@@ -203,7 +203,8 @@ export default function HomeTours() {
   const featured = tours.filter((t) => t.isFeatured);
   const perView  = usePerView();
   const isMobile = perView === 1;
-  const GAP      = 16; // px gap between cards
+  const GAP      = 16;
+  const { t }    = useLang();
 
   const { index, maxIndex, prev, next, goTo, canPrev, canNext, touchHandlers } =
     useCarousel(featured.length, perView);
@@ -229,20 +230,19 @@ export default function HomeTours() {
         {/* heading row — aligns with the full track width */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-8">
           <div>
-            <p className="eyebrow mb-3">Signature Journeys</p>
+            <p className="eyebrow mb-3">{t('home_tours.eyebrow')}</p>
             <h2 className="section-title">
-              Seven Extraordinary<br />
+              {t('home_tours.heading1')}<br />
               <em className="font-light" style={{ color: 'var(--color-primary-light)' }}>
-                Expeditions
+                {t('home_tours.heading2')}
               </em>
             </h2>
           </div>
-          {/* "View All Journeys" — marigold gold on hover */}
           <Link
             href="/tours"
             className="btn-link-secondary group flex items-center gap-2 shrink-0"
           >
-            View All Journeys
+            {t('home_tours.all_link')}
             <ArrowRight size={13} className="transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </div>
@@ -302,10 +302,10 @@ export default function HomeTours() {
         {/* footer CTA */}
         <div className="mt-10 text-center">
           <p className="font-serif text-lg italic mb-5" style={{ color: 'var(--color-text-muted)' }}>
-            &ldquo;Each journey is personally designed — a hand-woven masterpiece by Om.&rdquo;
+            {t('home_tours.footer_quote')}
           </p>
           <Link href="/contact" className="btn-primary inline-flex">
-            Design My Journey
+            {t('common.plan_journey')}
           </Link>
         </div>
       </div>

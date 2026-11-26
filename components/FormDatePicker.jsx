@@ -1,41 +1,29 @@
 'use client';
 /**
  * FormDatePicker
- * ─────────────────────────────────────────────────────────────────
- * A date-input-style control that opens a custom calendar popover.
- * Uses native <input type="date"> is NOT used because its browser-
- * owned popup cannot render Google festival names in individual cells.
- * Instead: visible styled trigger → accessible popover with full
- * custom calendar that shows real holiday names.
- *
- * Props:
- *   value        — "YYYY-MM-DD" | "" — controlled selected date
- *   onChange     — (iso: string) => void
- *   labelStyle   — style object for label, or false to hide label
- *   initialMonth — "YYYY-MM-DD" hint for which month to open on
- *
- * Behavior:
- *   - Click / Enter / Space on trigger → opens popover
- *   - Escape or click outside → closes popover
- *   - Selecting a date → closes popover + calls onChange
- *   - Clear button → resets both display and hidden ISO value
- *   - Past dates and booking-blocked dates: disabled
- *   - Festival dates: gold highlight, selectable, name shown
- *   - Selected festival dates: details pill below calendar
- *   - Query param ?date= → trigger pre-selected, month synced
- *   - Uses same /api/booked-dates as AvailabilityDrawer (shared hook)
+ * Locale-aware calendar popover for travel date selection.
+ * All first-party UI strings come from contactContent.calendar via useLang().
+ * Festival proper titles are sourced from Google Calendar — kept as-is.
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { CalendarIcon, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useCalendarEvents } from '@/hooks/useCalendarEvents';
 import { getFestivalsForDate, isDateBlocked } from '@/lib/calendarUtils';
+import { useLang } from '@/lib/LanguageContext';
+import { contactContent as cc } from '@/data/siteContent';
 
-/* ── calendar helpers ────────────────────────────────────────────── */
-const WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-const MONTHS   = [
+/* ── Calendar helpers ──────────────────────────────────────────── */
+const WEEKDAYS_EN = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+const WEEKDAYS_ES = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'];
+
+const MONTHS_EN = [
   'January','February','March','April','May','June',
   'July','August','September','October','November','December',
+];
+const MONTHS_ES = [
+  'Enero','Febrero','Marzo','Abril','Mayo','Junio',
+  'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre',
 ];
 
 function todayIso() { return new Date().toISOString().slice(0, 10); }
@@ -58,7 +46,6 @@ function buildGrid(year, month0) {
   return cells;
 }
 
-/** Derive initial view from a date string; fall back to today */
 function viewFromDate(dateStr) {
   if (dateStr && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
     const d     = new Date(dateStr + 'T00:00:00');
@@ -71,12 +58,12 @@ function viewFromDate(dateStr) {
   return { year: now.getFullYear(), month: now.getMonth() };
 }
 
-/** Format "YYYY-MM-DD" for display in the trigger */
-function formatDisplay(iso) {
+function formatDisplay(iso, lang) {
   if (!iso) return '';
-  return new Date(iso + 'T00:00:00').toLocaleDateString('en-GB', {
-    weekday: 'short', day: 'numeric', month: 'long', year: 'numeric',
-  });
+  return new Date(iso + 'T00:00:00').toLocaleDateString(
+    lang === 'es' ? 'es-ES' : 'en-GB',
+    { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' },
+  );
 }
 
 /* ── Festival micro label (cell) ─────────────────────────────────── */
@@ -91,7 +78,7 @@ function FestivalMicro({ festivals, selected }) {
         color: selected ? 'rgba(255,255,255,0.85)' : 'var(--color-secondary-hover)',
         maxWidth: '100%', overflow: 'hidden',
         textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-        display: 'block', textDecoration: 'none',
+        display: 'block',
       }}
     >
       {first.length > 6 ? first.slice(0, 5) + '…' : first}
@@ -100,11 +87,11 @@ function FestivalMicro({ festivals, selected }) {
   );
 }
 
-/* ── main component ──────────────────────────────────────────────── */
+/* ── Main component ──────────────────────────────────────────────── */
 export default function FormDatePicker({ value, onChange, labelStyle, initialMonth }) {
+  const { lang, localized } = useLang();
   const [open, setOpen] = useState(false);
 
-  // View month — initialise from value or initialMonth hint
   const startView = viewFromDate(value || initialMonth || '');
   const [viewYear,  setViewYear]  = useState(startView.year);
   const [viewMonth, setViewMonth] = useState(startView.month);
@@ -112,10 +99,16 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
   const popoverRef = useRef(null);
   const triggerRef = useRef(null);
 
-  // Shared calendar data (loads when popover opens first time)
   const { events, loading, error, retry } = useCalendarEvents(open);
 
-  /* ── sync view when external value changes (URL ?date=) ──────── */
+  const WEEKDAYS = lang === 'es' ? WEEKDAYS_ES : WEEKDAYS_EN;
+  const MONTHS   = lang === 'es' ? MONTHS_ES   : MONTHS_EN;
+
+  /* Locale-aware calendar label strings */
+  const cal = cc.calendar;
+  const tCal = useCallback((key) => localized(cal[key]), [lang, localized]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* Sync view when external value changes (URL ?date=) */
   useEffect(() => {
     if (!value) return;
     const v = viewFromDate(value);
@@ -123,22 +116,20 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
     setViewMonth(v.month);
   }, [value]);
 
-  /* ── close on outside click ──────────────────────────────────── */
+  /* Close on outside click */
   useEffect(() => {
     if (!open) return;
     const handler = (e) => {
       if (
         popoverRef.current && !popoverRef.current.contains(e.target) &&
         triggerRef.current && !triggerRef.current.contains(e.target)
-      ) {
-        setOpen(false);
-      }
+      ) setOpen(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [open]);
 
-  /* ── Escape closes popover ───────────────────────────────────── */
+  /* Escape closes */
   useEffect(() => {
     if (!open) return;
     const handler = (e) => {
@@ -148,9 +139,8 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
     return () => document.removeEventListener('keydown', handler);
   }, [open]);
 
-  /* ── helpers ─────────────────────────────────────────────────── */
-  const isBusy   = useCallback((iso) => isDateBlocked(events, iso), [events]);
-  const getHols  = useCallback((iso) => getFestivalsForDate(events, iso), [events]);
+  const isBusy  = useCallback((iso) => isDateBlocked(events, iso), [events]);
+  const getHols = useCallback((iso) => getFestivalsForDate(events, iso), [events]);
 
   const today0         = new Date();
   const isPrevDisabled = viewYear === today0.getFullYear() && viewMonth <= today0.getMonth();
@@ -178,7 +168,6 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
   };
 
   const toggleOpen = () => setOpen(o => !o);
-
   const handleTriggerKey = (e) => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleOpen(); }
   };
@@ -186,7 +175,6 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
   const grid              = buildGrid(viewYear, viewMonth);
   const selectedFestivals = value ? getHols(value) : [];
 
-  /* ── default label style ─────────────────────────────────────── */
   const defaultLabelStyle = {
     display: 'block',
     fontFamily: 'var(--font-body, Inter, system-ui, sans-serif)',
@@ -194,20 +182,21 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
     textTransform: 'uppercase', color: 'var(--color-text-muted)', marginBottom: '6px',
   };
 
+  const triggerLabel = value
+    ? `${tCal('travelDate')} ${formatDisplay(value, lang)}`
+    : tCal('placeholder');
+
   return (
     <div style={{ position: 'relative' }}>
 
       {/* Label */}
       {labelStyle !== false && (
-        <label
-          htmlFor="fdp-trigger"
-          style={labelStyle ?? defaultLabelStyle}
-        >
-          Travel Date
+        <label htmlFor="fdp-trigger" style={labelStyle ?? defaultLabelStyle}>
+          {tCal('label')}
         </label>
       )}
 
-      {/* ── Trigger (looks like a date input) ─────────────────── */}
+      {/* ── Trigger ───────────────────────────────────────────── */}
       <div
         id="fdp-trigger"
         ref={triggerRef}
@@ -215,47 +204,43 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
         tabIndex={0}
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-label={value ? `Travel Date: ${formatDisplay(value)}` : 'Select travel date'}
+        aria-label={triggerLabel}
         onClick={toggleOpen}
         onKeyDown={handleTriggerKey}
         style={{
           display: 'flex', alignItems: 'center', gap: '10px',
-          width: '100%', padding: '0.65rem 0.9rem',
+          width: '100%', height: '52px', padding: '0 0.9rem',
           backgroundColor: 'var(--color-surface-alt)',
           border: `1px solid ${open ? 'var(--color-primary)' : 'var(--color-border)'}`,
           borderRadius: 'var(--radius-control)',
           cursor: 'pointer', userSelect: 'none',
-          transition: 'border-color 0.2s ease',
-          outline: 'none',
-          boxSizing: 'border-box',
+          transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+          outline: 'none', boxSizing: 'border-box',
+          boxShadow: open ? '0 0 0 3px rgba(27,42,94,0.1)' : 'none',
         }}
         onFocus={e => e.currentTarget.style.borderColor = 'var(--color-primary)'}
         onBlur={e => { if (!open) e.currentTarget.style.borderColor = 'var(--color-border)'; }}
       >
-        <CalendarIcon
-          size={15}
-          style={{ color: 'var(--color-primary)', flexShrink: 0 }}
-        />
-
+        <CalendarIcon size={15} style={{ color: 'var(--color-primary)', flexShrink: 0 }} />
         <span style={{
           flex: 1,
           fontFamily: 'var(--font-body, Inter, system-ui, sans-serif)',
           fontSize: '0.875rem',
           color: value ? 'var(--color-text)' : 'var(--color-text-muted)',
         }}>
-          {value ? formatDisplay(value) : 'Select travel date'}
+          {value ? formatDisplay(value, lang) : tCal('placeholder')}
         </span>
-
         {value && (
           <button
             type="button"
             onClick={handleClear}
-            aria-label="Clear date"
+            aria-label={tCal('clearDate')}
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: 'none', border: 'none', cursor: 'pointer',
               color: 'var(--color-text-muted)', padding: '2px',
               borderRadius: '50%', flexShrink: 0,
+              minWidth: '44px', minHeight: '44px',
             }}
             onMouseEnter={e => e.currentTarget.style.color = 'var(--color-text)'}
             onMouseLeave={e => e.currentTarget.style.color = 'var(--color-text-muted)'}
@@ -274,7 +259,7 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
           ref={popoverRef}
           role="dialog"
           aria-modal="false"
-          aria-label="Choose travel date"
+          aria-label={tCal('chooseDate')}
           style={{
             position: 'absolute',
             top: 'calc(100% + 6px)',
@@ -299,12 +284,13 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
               type="button"
               onClick={prevMonth}
               disabled={isPrevDisabled}
-              aria-label="Previous month"
+              aria-label={tCal('prevMonth')}
               style={{
                 background: 'none', border: 'none',
                 cursor: isPrevDisabled ? 'default' : 'pointer',
                 color: isPrevDisabled ? 'var(--color-border-strong)' : 'var(--color-text)',
                 padding: '4px', display: 'flex', borderRadius: '4px',
+                minWidth: '32px', minHeight: '32px', alignItems: 'center', justifyContent: 'center',
               }}
             >
               <ChevronLeft size={14} />
@@ -320,11 +306,12 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
             <button
               type="button"
               onClick={nextMonth}
-              aria-label="Next month"
+              aria-label={tCal('nextMonth')}
               style={{
                 background: 'none', border: 'none',
                 cursor: 'pointer', color: 'var(--color-text)',
                 padding: '4px', display: 'flex', borderRadius: '4px',
+                minWidth: '32px', minHeight: '32px', alignItems: 'center', justifyContent: 'center',
               }}
             >
               <ChevronRight size={14} />
@@ -352,18 +339,22 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
             display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)',
             padding: '0 10px 10px', gap: '2px',
           }}>
-            {loading
-              ? Array.from({ length: 35 }).map((_, i) => (
-                  <div key={i} style={{
+            {/* Loading skeleton — overlays the grid structure */}
+            {loading && (
+              <>
+                {Array.from({ length: 35 }).map((_, i) => (
+                  <div key={`sk-${i}`} style={{
                     height: '32px', borderRadius: 'var(--radius-control)',
                     backgroundColor: 'var(--color-border)',
                     animation: 'pulse 1.4s ease-in-out infinite',
                     animationDelay: `${(i % 7) * 50}ms`,
                   }} />
-                ))
-              : grid.map((cell, idx) => {
+                ))}
+              </>
+            )}
+            {/* Date cells — always present once not loading */}
+            {!loading && grid.map((cell, idx) => {
                   if (!cell) return <div key={idx} />;
-
                   const busy       = isBusy(cell.iso);
                   const hols       = getHols(cell.iso);
                   const hasHol     = hols.length > 0;
@@ -381,8 +372,7 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
                     border = '1px solid var(--color-primary)';
                     cursor = 'default';
                   } else if (cell.isToday && !disabled) {
-                    border = '1px solid var(--color-primary)';
-                    fg     = 'var(--color-primary)';
+                    border = '1px solid var(--color-primary)'; fg = 'var(--color-primary)';
                   } else if (busy) {
                     bg = 'rgba(192,69,59,0.08)'; fg = 'var(--color-text-muted)';
                     textDec = 'line-through';
@@ -390,18 +380,22 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
                     bg = 'rgba(232,163,23,0.10)';
                   }
 
+                  const ariaLabel = cell.isPast
+                    ? `${cell.iso} — ${tCal('past')}`
+                    : busy
+                    ? `${cell.iso} — ${tCal('unavailable')}`
+                    : hasHol
+                    ? `${cell.iso} — ${hols.map(f => f.title).join(', ')}`
+                    : isSelected
+                    ? `${cell.iso} — ${tCal('selected')}`
+                    : `${tCal('selectAria')} ${cell.iso}`;
+
                   return (
                     <div
                       key={cell.iso}
                       role={disabled ? undefined : 'button'}
                       tabIndex={disabled ? -1 : 0}
-                      aria-label={
-                        cell.isPast  ? `${cell.iso} — past` :
-                        busy         ? `${cell.iso} — unavailable` :
-                        hasHol       ? `${cell.iso} — ${hols.map(f => f.title).join(', ')}` :
-                        isSelected   ? `${cell.iso} — selected` :
-                                       `Select ${cell.iso}`
-                      }
+                      aria-label={ariaLabel}
                       aria-disabled={disabled ? 'true' : undefined}
                       aria-pressed={isSelected ? 'true' : undefined}
                       title={hasHol ? hols.map(f => f.title).join(' · ') : undefined}
@@ -417,11 +411,9 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
                         height: hasHol ? '40px' : '32px', gap: '2px',
                         borderRadius: 'var(--radius-control)',
                         backgroundColor: bg, color: fg, border, cursor,
-                        fontFamily: 'var(--font-body, system-ui)',
-                        fontSize: '12px',
+                        fontFamily: 'var(--font-body, system-ui)', fontSize: '12px',
                         fontWeight: isSelected || cell.isToday ? 500 : 400,
-                        opacity: cell.isPast ? 0.35 : 1,
-                        textDecoration: textDec,
+                        opacity: cell.isPast ? 0.35 : 1, textDecoration: textDec,
                         outline: 'none', userSelect: 'none',
                         transition: 'background-color 150ms ease, border-color 150ms ease',
                       }}
@@ -457,10 +449,10 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
             borderTop: '1px solid var(--color-border)',
           }}>
             {[
-              ['var(--color-primary)',       'Available'],
-              ['rgba(232,163,23,0.30)',       'Festival'],
-              ['rgba(192,69,59,0.15)',        'Unavailable'],
-              ['rgba(0,0,0,0.12)',            'Past'],
+              ['var(--color-primary)',    tCal('legendAvail')],
+              ['rgba(232,163,23,0.30)',   tCal('legendFest')],
+              ['rgba(192,69,59,0.15)',    tCal('legendBusy')],
+              ['rgba(0,0,0,0.12)',        tCal('legendPast')],
             ].map(([color, label]) => (
               <span key={label} style={{
                 display: 'flex', alignItems: 'center', gap: '4px',
@@ -470,12 +462,11 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
                 <span style={{
                   width: '8px', height: '8px', borderRadius: '2px',
                   backgroundColor: color, display: 'inline-block', flexShrink: 0,
-                }} />
+                }} aria-hidden="true" />
                 {label}
               </span>
             ))}
 
-            {/* Error state inside popover */}
             {error && (
               <button
                 type="button"
@@ -487,7 +478,7 @@ export default function FormDatePicker({ value, onChange, labelStyle, initialMon
                   fontSize: '9px', textDecoration: 'underline', padding: 0,
                 }}
               >
-                Retry loading
+                {tCal('retryLoad')}
               </button>
             )}
           </div>

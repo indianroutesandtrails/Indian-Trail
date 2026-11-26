@@ -16,6 +16,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { testimonials } from '@/data/testimonials';
 import { useSnapCarousel } from '@/hooks/useSnapCarousel';
+import { useLang } from '@/lib/LanguageContext';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 /* ─────────────────────────────────────────────────────────────────
@@ -201,11 +202,11 @@ function TestimonialItem({ item, showDivider }) {
    Active: 22×7px marigold pill. Inactive: 7×7px muted circle.
    Button padding:0, border:none, appearance:none — no global inheritance.
 ───────────────────────────────────────────────────────────────── */
-function PaginationDots({ positions, activeIndex, onDot }) {
+function PaginationDots({ positions, activeIndex, onDot, positionLabel }) {
   return (
     <div
       role="tablist"
-      aria-label="Testimonial position"
+      aria-label={positionLabel}
       style={{
         display:        'flex',
         alignItems:     'center',
@@ -320,6 +321,7 @@ function TrackArrow({ onClick, disabled, label, side }) {
 export default function HomeTestimonials() {
   const perView = usePerView();
   const GAP     = 28; // px, matches CSS gap on track
+  const { t }   = useLang();
 
   const {
     trackRef,
@@ -363,18 +365,18 @@ export default function HomeTestimonials() {
             marginBottom: '40px',
           }}
         >
-          <p className="eyebrow" style={{ marginBottom: '12px' }}>Guest Stories</p>
+          <p className="eyebrow" style={{ marginBottom: '12px' }}>{t('testimonials.eyebrow')}</p>
           <h2 className="section-title">
-            Journeys<br />
+            {t('testimonials.heading1')}<br />
             <em className="font-light" style={{ color: 'var(--color-primary-light)' }}>
-              Remembered
+              {t('testimonials.heading2')}
             </em>
           </h2>
           <p
             className="body-text"
             style={{ maxWidth: '26rem', marginTop: '14px' }}
           >
-            A few words from travellers who experienced India with us.
+            {t('testimonials.subline')}
           </p>
         </div>
 
@@ -383,8 +385,8 @@ export default function HomeTestimonials() {
           {/* Overlay arrows — tablet + desktop only, positioned at track corners */}
           {showArrows && (
             <>
-              <TrackArrow onClick={prev} disabled={!canPrev} label="Previous testimonial" side="left" />
-              <TrackArrow onClick={next} disabled={!canNext} label="Next testimonial" side="right" />
+              <TrackArrow onClick={prev} disabled={!canPrev} label={t('testimonials.prev')} side="left" />
+              <TrackArrow onClick={next} disabled={!canNext} label={t('testimonials.next')} side="right" />
             </>
           )}
 
@@ -437,6 +439,7 @@ export default function HomeTestimonials() {
           positions={positions}
           activeIndex={activeIndex}
           onDot={goTo}
+          positionLabel={t('testimonials.position')}
         />
 
         {/* ── Bottom hairline ────────────────────────────────── */}

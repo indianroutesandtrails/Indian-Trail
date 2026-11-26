@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { ChevronDown, MapPin, Train, Plane, Car, Footprints, Info } from 'lucide-react';
+import { useLang } from '@/lib/LanguageContext';
 
 function TransportIcon({ transport }) {
   const tr = (transport || '').toLowerCase();
@@ -11,6 +12,7 @@ function TransportIcon({ transport }) {
 }
 
 export default function ItineraryTimeline({ days }) {
+  const { t } = useLang();
   const [openDay, setOpenDay] = useState(0); // Day 1 open by default
 
   return (
@@ -44,7 +46,7 @@ export default function ItineraryTimeline({ days }) {
                   className="font-sans text-[8px] tracking-wider uppercase"
                   style={{ color: isOpen ? 'var(--color-text-invert-muted)' : 'var(--color-primary)' }}
                 >
-                  Day
+                  {t('common.day')}
                 </span>
                 <span
                   className="font-serif text-base font-light leading-none"
@@ -71,7 +73,7 @@ export default function ItineraryTimeline({ days }) {
                         borderRadius: 'var(--radius-pill)',
                       }}
                     >
-                      Optional
+                      {t('common.optional')}
                     </span>
                   )}
                 </div>
@@ -112,7 +114,7 @@ export default function ItineraryTimeline({ days }) {
                   <div>
                     <p className="font-sans text-[9px] tracking-[0.22em] uppercase mb-2"
                       style={{ color: 'var(--color-text-muted)' }}>
-                      Activities
+                      {t('common.activities')}
                     </p>
                     <ul className="space-y-1.5">
                       {day.activities.map((a, i) => (

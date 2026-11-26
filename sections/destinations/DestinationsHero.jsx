@@ -1,16 +1,18 @@
 'use client';
 import Image from 'next/image';
+import { useLang } from '@/lib/LanguageContext';
 
 export default function DestinationsHero() {
+  const { t } = useLang();
   return (
     <section
+      className="hero-header-clearance"
       style={{
         position:   'relative',
         minHeight:  'clamp(400px, 62vh, 680px)',
         display:    'flex',
         alignItems: 'flex-end',
         overflow:   'hidden',
-        paddingTop: 'var(--header-height-desktop)',
       }}
     >
       <div className="absolute inset-0">
@@ -25,15 +27,14 @@ export default function DestinationsHero() {
           style={{ background: 'linear-gradient(to right, rgba(20,34,77,0.55) 0%, transparent 60%)' }} />
       </div>
       <div className="relative container-luxury pb-16">
-        <p className="eyebrow mb-4" style={{ color: 'var(--color-secondary)' }}>Explore India</p>
+        <p className="eyebrow mb-4" style={{ color: 'var(--color-secondary)' }}>{t('nav.destinations')}</p>
         <h1 className="display-title leading-none" style={{ color: 'var(--color-text-invert)' }}>
-          Cities That<br />
-          <em className="font-light" style={{ color: 'var(--color-secondary)' }}>Stay With You</em>
+          {t('destinations_page.heading1')}<br />
+          <em className="font-light" style={{ color: 'var(--color-secondary)' }}>{t('destinations_page.heading2')}</em>
         </h1>
         <p className="mt-5 font-sans font-light max-w-xl"
           style={{ color: 'rgba(255,255,255,0.62)', fontSize: '1.05rem' }}>
-          From Mughal monuments and desert dunes to sacred ghats and lake palaces — India distilled to its
-          most magnificent destinations.
+          {t('destinations_page.subtitle')}
         </p>
       </div>
     </section>

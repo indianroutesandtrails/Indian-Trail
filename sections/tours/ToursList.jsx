@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import Link from 'next/link';
@@ -7,12 +7,12 @@ import Image from 'next/image';
 import { tours } from '@/data/tours';
 import { festivals, festivalJourneyLinks } from '@/data/festivals';
 import { Clock, MapPin, Sun, ArrowRight, X } from 'lucide-react';
+import { useLang } from '@/lib/LanguageContext';
 
 const DURATION_BANDS = [
-  { label: 'All',       value: 'all',  fn: () => true },
-  { label: '1–7 days',  value: '1-7',  fn: (d) => d <= 7 },
-  { label: '8–12 days', value: '8-12', fn: (d) => d >= 8 && d <= 12 },
-  { label: '13+ days',  value: '13+',  fn: (d) => d >= 13 },
+  { label: '1–7',  value: '1-7',  fn: (d) => d <= 7 },
+  { label: '8–12', value: '8-12', fn: (d) => d >= 8 && d <= 12 },
+  { label: '13+',  value: '13+',  fn: (d) => d >= 13 },
 ];
 
 const INTEREST_OPTIONS = ['heritage', 'wildlife', 'spiritual', 'rural', 'culinary', 'photography'];
@@ -44,6 +44,7 @@ function Pill({ label, active, onClick, onRemove }) {
 function ToursListInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t, lang } = useLang();
 
   // Read initial state from URL
   const [duration, setDuration]     = useState(searchParams.get('duration') || 'all');
@@ -89,10 +90,12 @@ function ToursListInner() {
   };
   const linkedSlugs = getLinkedSlugs(festival);
 
-  const durBand = DURATION_BANDS.find((b) => b.value === duration) ?? DURATION_BANDS[0];
-
   const filtered = tours.filter((t) => {
-    if (!durBand.fn(t.duration)) return false;
+    // Duration: skip predicate entirely when no duration filter is active
+    if (duration && duration !== 'all') {
+      const band = DURATION_BANDS.find((b) => b.value === duration);
+      if (band && !band.fn(t.duration)) return false;
+    }
     if (interests.length && !interests.every((i) => t.interests?.includes(i))) return false;
     if (linkedSlugs && !linkedSlugs.includes(t.slug)) return false;
     if (destination && !t.route.some((c) => c === destination)) return false;
@@ -113,29 +116,43 @@ function ToursListInner() {
           {/* Duration */}
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-sans text-[10px] tracking-[0.2em] uppercase mr-1"
-              style={{ color: 'var(--color-text-muted)' }}>Duration</span>
-            {DURATION_BANDS.map((b) => (
-              <Pill key={b.value} label={b.label} active={duration === b.value}
-                onClick={() => setDur(b.value)} />
-            ))}
+              style={{ color: 'var(--color-text-muted)' }}>
+              {t('common.days')}
+            </span>
+            {DURATION_BANDS.map((b) => {
+              const label = b.labelKey ? t(b.labelKey) : `${b.label} ${t('common.days')}`;
+              return (
+                <Pill key={b.value} label={label} active={duration === b.value}
+                  onClick={() => setDur(b.value)} />
+              );
+            })}
           </div>
 
           {/* Interests */}
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-sans text-[10px] tracking-[0.2em] uppercase mr-1"
-              style={{ color: 'var(--color-text-muted)' }}>Interests</span>
-            {INTEREST_OPTIONS.map((interest) => (
-              <Pill key={interest} label={interest}
-                active={interests.includes(interest)}
-                onClick={() => toggleInterest(interest)}
-                onRemove={() => toggleInterest(interest)} />
-            ))}
+              style={{ color: 'var(--color-text-muted)' }}>
+              {lang === 'es' ? 'Intereses' : 'Interests'}
+            </span>
+            {INTEREST_OPTIONS.map((interest) => {
+              const label = t(`tours_page.filter_${interest}`) !== `tours_page.filter_${interest}`
+                ? t(`tours_page.filter_${interest}`)
+                : interest;
+              return (
+                <Pill key={interest} label={label}
+                  active={interests.includes(interest)}
+                  onClick={() => toggleInterest(interest)}
+                  onRemove={() => toggleInterest(interest)} />
+              );
+            })}
           </div>
 
           {/* Festival */}
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-sans text-[10px] tracking-[0.2em] uppercase mr-1"
-              style={{ color: 'var(--color-text-muted)' }}>Festival</span>
+              style={{ color: 'var(--color-text-muted)' }}>
+              {lang === 'es' ? 'Festival' : 'Festival'}
+            </span>
             <select
               value={festival}
               onChange={(e) => setFest(e.target.value)}
@@ -148,11 +165,11 @@ function ToursListInner() {
                 outline: 'none',
                 cursor: 'pointer',
               }}
-              aria-label="Filter by festival"
+              aria-label={lang === 'es' ? 'Filtrar por festival' : 'Filter by festival'}
             >
-              <option value="">Any Festival</option>
+              <option value="">{lang === 'es' ? 'Cualquier festival' : 'Any Festival'}</option>
               {festivals.map((f) => (
-                <option key={f.slug} value={f.slug}>{f.name.en}</option>
+                <option key={f.slug} value={f.slug}>{f.name[lang] ?? f.name.en}</option>
               ))}
             </select>
           </div>
@@ -160,7 +177,9 @@ function ToursListInner() {
           {/* Destination */}
           <div className="flex flex-wrap items-center gap-2">
             <span className="font-sans text-[10px] tracking-[0.2em] uppercase mr-1"
-              style={{ color: 'var(--color-text-muted)' }}>Destination</span>
+              style={{ color: 'var(--color-text-muted)' }}>
+              {lang === 'es' ? 'Destino' : 'Destination'}
+            </span>
             <select
               value={destination}
               onChange={(e) => setDest(e.target.value)}
@@ -173,9 +192,9 @@ function ToursListInner() {
                 outline: 'none',
                 cursor: 'pointer',
               }}
-              aria-label="Filter by destination"
+              aria-label={lang === 'es' ? 'Filtrar por destino' : 'Filter by destination'}
             >
-              <option value="">Any Destination</option>
+              <option value="">{lang === 'es' ? 'Cualquier destino' : 'Any Destination'}</option>
               {ALL_DESTINATIONS.map((d) => (
                 <option key={d} value={d}>{d}</option>
               ))}
@@ -189,7 +208,7 @@ function ToursListInner() {
               className="inline-flex items-center gap-1.5 font-sans text-[10px] tracking-[0.15em] uppercase transition-colors"
               style={{ color: 'var(--color-accent)' }}
             >
-              <X size={11} /> Clear All
+              <X size={11} /> {lang === 'es' ? 'Limpiar todo' : 'Clear All'}
             </button>
           )}
         </div>
@@ -198,24 +217,28 @@ function ToursListInner() {
         {filtered.length === 0 ? (
           <div className="text-center py-20">
             <p className="font-serif text-xl italic mb-3" style={{ color: 'var(--color-text-muted)' }}>
-              No journeys match your selection.
+              {lang === 'es' ? 'Ningún viaje coincide con tu selección.' : 'No journeys match your selection.'}
             </p>
             <p className="font-sans text-sm mb-6" style={{ color: 'var(--color-text-muted)' }}>
-              Try adjusting your filters, or enquire for a fully bespoke itinerary.
+              {lang === 'es'
+                ? 'Ajusta los filtros o consulta por un itinerario a medida.'
+                : 'Try adjusting your filters, or enquire for a fully bespoke itinerary.'}
             </p>
             <div className="flex items-center justify-center gap-4">
               <button onClick={resetAll}
                 className="font-sans text-xs tracking-[0.2em] uppercase"
                 style={{ color: 'var(--color-primary)', textDecoration: 'underline' }}>
-                Reset Filters
+                {lang === 'es' ? 'Restablecer filtros' : 'Reset Filters'}
               </button>
-              <Link href="/contact" className="btn-indigo inline-flex">Enquire for Bespoke</Link>
+              <Link href="/contact" className="btn-indigo inline-flex">
+                {lang === 'es' ? 'Consultar itinerario' : 'Enquire for Bespoke'}
+              </Link>
             </div>
           </div>
         ) : (
           <div className="space-y-0">
             {filtered.map((tour, i) => (
-              <TourRow key={tour.id} tour={tour} index={i} reverse={i % 2 !== 0} />
+              <TourRow key={tour.id} tour={tour} index={i} reverse={i % 2 !== 0} lang={lang} />
             ))}
           </div>
         )}
@@ -229,23 +252,27 @@ function ToursListInner() {
             borderRadius: 'var(--radius-card)',
           }}
         >
-          <p className="eyebrow mb-4">Something Different?</p>
+          <p className="eyebrow mb-4">{lang === 'es' ? '¿Algo diferente?' : 'Something Different?'}</p>
           <h3 className="font-serif text-2xl font-light mb-4" style={{ color: 'var(--color-text)' }}>
-            Every Journey Can Be Personalised
+            {lang === 'es' ? 'Cada viaje puede personalizarse' : 'Every Journey Can Be Personalised'}
           </h3>
           <p className="font-sans text-sm font-light mb-7 max-w-lg mx-auto"
             style={{ color: 'var(--color-text-muted)' }}>
-            Om personally designs bespoke itineraries for discerning travellers. Tell him your vision and
-            he will craft something that goes far beyond these pages.
+            {lang === 'es'
+              ? 'Om diseña itinerarios a medida para viajeros exigentes. Comparte tu visión y él creará algo que va mucho más allá de estas páginas.'
+              : 'Om personally designs bespoke itineraries for discerning travellers. Tell him your vision and he will craft something that goes far beyond these pages.'}
           </p>
-          <Link href="/contact" className="btn-primary inline-flex">Design My Journey</Link>
+          <Link href="/contact" className="btn-primary inline-flex">
+            {lang === 'es' ? 'Diseña Mi Viaje' : 'Design My Journey'}
+          </Link>
         </div>
       </div>
     </section>
   );
 }
 
-function TourRow({ tour, index, reverse }) {
+function TourRow({ tour, index, reverse, lang = 'en' }) {
+  const { localized } = useLang();
   return (
     <div
       className="grid grid-cols-1 lg:grid-cols-2 group"
@@ -256,7 +283,7 @@ function TourRow({ tour, index, reverse }) {
         style={{ minHeight: '340px' }}>
         <Image
           src={tour.featuredImage}
-          alt={`${tour.title} — Indian Routes & Trails`}
+          alt={`${localized(tour.title)} — Indian Routes & Trails`}
           fill
           className="object-cover"
           style={{ transition: `transform var(--motion-image-hover)` }}
@@ -270,7 +297,7 @@ function TourRow({ tour, index, reverse }) {
           className="absolute top-5 left-5 flex items-center gap-1.5 px-3 py-1.5 font-sans text-[9px] tracking-[0.2em] uppercase"
           style={{ backgroundColor: 'rgba(27,42,94,0.88)', color: '#fff', borderRadius: 'var(--radius-pill)' }}
         >
-          <Clock size={9} /> {tour.duration} Days
+          <Clock size={9} /> {tour.duration} {lang === 'es' ? 'días' : 'Days'}
         </div>
         {tour.interests?.length > 0 && (
           <div className="absolute bottom-5 left-5 flex flex-wrap gap-1.5">
@@ -304,7 +331,7 @@ function TourRow({ tour, index, reverse }) {
 
         <h2 className="font-serif font-light mb-4 leading-snug"
           style={{ color: 'var(--color-text)', fontSize: 'clamp(1.4rem,2.5vw,2rem)' }}>
-          {tour.title}
+          {localized(tour.title)}
         </h2>
 
         <div className="flex items-start gap-2 mb-5">
@@ -316,17 +343,17 @@ function TourRow({ tour, index, reverse }) {
 
         <p className="font-sans text-sm font-light leading-relaxed mb-7 line-clamp-3"
           style={{ color: 'var(--color-text-muted)' }}>
-          {tour.teaser || tour.overview}
+          {localized(tour.teaser) || localized(tour.overview)}
         </p>
 
         <ul className="space-y-2 mb-8">
-          {tour.highlights.slice(0, 3).map((h, i) => (
+          {(tour.highlights || []).slice(0, 3).map((h, i) => (
             <li key={i} className="flex items-start gap-2.5">
               <span className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0"
                 style={{ backgroundColor: 'var(--color-secondary)' }} />
               <span className="font-sans text-xs leading-relaxed"
                 style={{ color: 'var(--color-text-muted)' }}>
-                {h}
+                {localized(h)}
               </span>
             </li>
           ))}
@@ -337,7 +364,7 @@ function TourRow({ tour, index, reverse }) {
           className="group/cta inline-flex items-center gap-3 font-sans text-xs tracking-[0.2em] uppercase self-start"
           style={{ color: 'var(--color-primary)' }}
         >
-          Explore This Journey
+          {lang === 'es' ? 'Explorar este viaje' : 'Explore This Journey'}
           <ArrowRight size={13}
             className="transition-transform duration-300 group-hover/cta:translate-x-1.5" />
         </Link>

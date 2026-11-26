@@ -1,16 +1,18 @@
 'use client';
 import Image from 'next/image';
+import { useLang } from '@/lib/LanguageContext';
 
 export default function ToursHero() {
+  const { t } = useLang();
   return (
     <section
+      className="hero-header-clearance"
       style={{
         position:   'relative',
         minHeight:  'clamp(420px, 62vh, 680px)',
         display:    'flex',
         alignItems: 'flex-end',
         overflow:   'hidden',
-        paddingTop: 'var(--header-height-desktop)',
       }}
     >
       <div className="absolute inset-0">
@@ -25,14 +27,14 @@ export default function ToursHero() {
           style={{ background: 'linear-gradient(to right, rgba(20,34,77,0.55) 0%, transparent 60%)' }} />
       </div>
       <div className="relative container-luxury pb-16">
-        <p className="eyebrow mb-4" style={{ color: 'var(--color-secondary)' }}>Signature Journeys</p>
+        <p className="eyebrow mb-4" style={{ color: 'var(--color-secondary)' }}>{t('tours_page.eyebrow')}</p>
         <h1 className="display-title leading-none" style={{ color: 'var(--color-text-invert)' }}>
-          Seven Extraordinary<br />
-          <em className="font-light" style={{ color: 'var(--color-secondary)' }}>Expeditions</em>
+          {t('tours_page.hero_heading1')}<br />
+          <em className="font-light" style={{ color: 'var(--color-secondary)' }}>{t('tours_page.hero_heading2')}</em>
         </h1>
         <p className="mt-5 font-sans font-light max-w-xl"
           style={{ color: 'rgba(255,255,255,0.62)', fontSize: '1.05rem' }}>
-          Each journey personally designed by Om — balancing ultra-luxury with raw, unfiltered India.
+          {t('tours_page.hero_subtitle')}
         </p>
       </div>
     </section>

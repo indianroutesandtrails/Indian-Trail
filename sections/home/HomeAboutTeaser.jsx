@@ -6,7 +6,7 @@ import { ArrowRight } from 'lucide-react';
 import { useLang } from '@/lib/LanguageContext';
 
 export default function HomeAboutTeaser() {
-  const { t } = useLang();
+  const { t, localized } = useLang();
 
   const STATS = [
     { value: '38+', label: t('home_about.stat_years_label'), sub: t('home_about.stat_years_sub') },
@@ -65,7 +65,7 @@ export default function HomeAboutTeaser() {
               style={{ borderLeft: '3px solid var(--color-secondary)', margin: 0 }}>
               <p className="font-serif text-base italic font-light leading-relaxed"
                 style={{ color: 'var(--color-text)' }}>
-                &ldquo;{omStory.quote}&rdquo;
+                &ldquo;{localized(omStory.quote)}&rdquo;
               </p>
               <footer className="font-sans text-[10px] tracking-[0.22em] uppercase mt-2"
                 style={{ color: 'var(--color-secondary)' }}>
@@ -75,8 +75,8 @@ export default function HomeAboutTeaser() {
 
             {/* Paragraphs */}
             <div className="space-y-4 mb-8">
-              <p className="body-large">{omStory.story[0]}</p>
-              <p className="body-text">{omStory.story[3]}</p>
+              <p className="body-large">{localized(omStory.story[0])}</p>
+              <p className="body-text">{localized(omStory.story[3])}</p>
             </div>
 
             {/* 4 stats row */}

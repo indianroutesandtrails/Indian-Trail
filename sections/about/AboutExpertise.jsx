@@ -6,7 +6,7 @@ import { useLang } from '@/lib/LanguageContext';
 const icons = [Star, Globe, BookOpen, Gem, MapPin, Users];
 
 export default function AboutExpertise() {
-  const { t } = useLang();
+  const { t, localized } = useLang();
   return (
     <section
       style={{
@@ -56,13 +56,13 @@ export default function AboutExpertise() {
                     className="font-serif font-light mb-1"
                     style={{ fontSize: '1rem', color: 'var(--color-text)', lineHeight: 1.3 }}
                   >
-                    {item.title}
+                    {localized(item.title)}
                   </h3>
                   <p
                     className="font-sans font-light leading-relaxed"
                     style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', margin: 0 }}
                   >
-                    {item.desc}
+                    {localized(item.desc)}
                   </p>
                 </div>
               </div>

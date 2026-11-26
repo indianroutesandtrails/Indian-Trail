@@ -21,6 +21,7 @@ function useIsMobile() {
 
 function WhyCard({ item }) {
   const [hov, setHov] = useState(false);
+  const { localized } = useLang();
   const Icon = iconMap[item.icon] || Star;
 
   return (
@@ -64,7 +65,7 @@ function WhyCard({ item }) {
 
       <h3 className="font-serif font-light mb-2"
         style={{ color: 'var(--color-text)', fontSize: '1.1rem', lineHeight: 1.3 }}>
-        {item.title}
+        {localized(item.title)}
       </h3>
 
       {/* animated gold underline */}
@@ -79,7 +80,7 @@ function WhyCard({ item }) {
 
       <p className="font-sans text-sm font-light leading-relaxed"
         style={{ color: 'var(--color-text-muted)', flexGrow: 1 }}>
-        {item.description}
+        {localized(item.description)}
       </p>
     </div>
   );

@@ -104,11 +104,13 @@ export function siteSchema() {
 }
 
 export function tourSchema(tour) {
+  const titleEn    = typeof tour.title    === 'object' ? tour.title.en    : (tour.title    ?? '');
+  const overviewEn = typeof tour.overview === 'object' ? tour.overview.en : (tour.overview ?? '');
   return {
     '@context': 'https://schema.org',
     '@type':    'TouristTrip',
-    name:       tour.title,
-    description: tour.overview ?? '',
+    name:       titleEn,
+    description: overviewEn,
     url:        `https://www.indianroutesandtrails.com/tours/${tour.slug}`,
     image:      tour.featuredImage ?? '',
     touristType: ['Luxury', 'Cultural', 'Heritage'],

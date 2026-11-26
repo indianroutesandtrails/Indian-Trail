@@ -342,21 +342,7 @@ export default function AvailabilityDrawer({ open, onClose, triggerRef, id }) {
         {/* ── Calendar grid ─────────────────────────────────────── */}
         <div style={{ padding: '0 16px', flex: 1, minHeight: 0 }}>
 
-          {/* Loading skeleton */}
-          {loading && !error && !notConfigured && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' }}>
-              {Array.from({ length: 35 }).map((_, i) => (
-                <div key={i} style={{
-                  height: '36px', borderRadius: 'var(--radius-control)',
-                  backgroundColor: 'var(--color-border)',
-                  animation: 'pulse 1.4s ease-in-out infinite',
-                  animationDelay: `${(i % 7) * 60}ms`,
-                }} />
-              ))}
-            </div>
-          )}
-
-          {/* Not configured */}
+          {/* Not configured — silent, no retry needed */}
           {notConfigured && (
             <div style={{ textAlign: 'center', padding: '32px 16px' }}>
               <CalendarDays size={32} style={{ color: 'var(--color-border-strong)', margin: '0 auto 10px' }} />
@@ -364,7 +350,7 @@ export default function AvailabilityDrawer({ open, onClose, triggerRef, id }) {
                 fontFamily: 'var(--font-body, system-ui)', fontSize: '13px',
                 color: 'var(--color-text-muted)', margin: 0, lineHeight: 1.5,
               }}>
-                Availability is temporarily unavailable.
+                Availability calendar is not yet configured.
               </p>
             </div>
           )}
@@ -397,111 +383,137 @@ export default function AvailabilityDrawer({ open, onClose, triggerRef, id }) {
             </div>
           )}
 
-          {/* Loaded grid */}
-          {!loading && !error && !notConfigured && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '3px' }}>
-              {grid.map((cell, idx) => {
-                if (!cell) return <div key={idx} />;
+          {/* Calendar grid — always rendered when not in special states.
+              Grid renders with current-month dates regardless of events array.
+              Loading skeleton overlays the grid while data is in-flight. */}
+          {!notConfigured && !error && (
+            <div style={{ position: 'relative' }}>
+              {/* Loading skeleton overlay */}
+              {loading && (
+                <div style={{
+                  position: 'absolute', inset: 0, zIndex: 2,
+                  display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '3px',
+                }}>
+                  {Array.from({ length: 35 }).map((_, i) => (
+                    <div key={i} style={{
+                      height: '36px', borderRadius: 'var(--radius-control)',
+                      backgroundColor: 'var(--color-border)',
+                      animation: 'pulse 1.4s ease-in-out infinite',
+                      animationDelay: `${(i % 7) * 60}ms`,
+                    }} />
+                  ))}
+                </div>
+              )}
 
-                const busy       = isBusy(cell.iso);
-                const hols       = getHols(cell.iso);
-                const hasHol     = hols.length > 0;
-                const disabled   = cell.isPast || busy;
-                const isSelected = selected === cell.iso;
-                const showMsg    = disabledMsg?.iso === cell.iso;
+              {/* Actual date grid — always present so month numbers show */}
+              <div style={{
+                display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '3px',
+                opacity: loading ? 0 : 1,
+                transition: 'opacity 200ms ease',
+              }}>
+                {grid.map((cell, idx) => {
+                  if (!cell) return <div key={idx} />;
 
-                let bg     = 'transparent';
-                let fg     = 'var(--color-text)';
-                let border = '1px solid transparent';
-                let cursor = 'pointer';
+                  const busy       = isBusy(cell.iso);
+                  const hols       = getHols(cell.iso);
+                  const hasHol     = hols.length > 0;
+                  const disabled   = cell.isPast || busy;
+                  const isSelected = selected === cell.iso;
+                  const showMsg    = disabledMsg?.iso === cell.iso;
 
-                if (isSelected) {
-                  bg = 'var(--color-primary)'; fg = '#fff';
-                  border = '1px solid var(--color-primary)';
-                } else if (cell.isToday && !disabled) {
-                  border = '1px solid var(--color-primary)';
-                  fg = 'var(--color-primary)';
-                } else if (disabled) {
-                  fg = 'var(--color-border-strong)';
-                  cursor = 'default';
-                  if (busy) bg = 'rgba(20,34,77,0.06)';
-                } else if (hasHol) {
-                  bg = 'rgba(232,163,23,0.10)';
-                }
+                  let bg     = 'transparent';
+                  let fg     = 'var(--color-text)';
+                  let border = '1px solid transparent';
+                  let cursor = 'pointer';
 
-                return (
-                  <div key={cell.iso} style={{ position: 'relative' }}>
-                    <div
-                      role={disabled ? undefined : 'button'}
-                      tabIndex={disabled ? -1 : 0}
-                      aria-label={
-                        cell.isPast ? `${cell.iso} — past date` :
-                        busy        ? `${cell.iso} — unavailable` :
-                        hasHol      ? `${cell.iso} — ${hols.map(f => f.title).join(', ')}` :
-                                      `Select ${cell.iso}`
-                      }
-                      aria-disabled={disabled ? 'true' : undefined}
-                      aria-pressed={isSelected ? 'true' : undefined}
-                      onClick={() => handleCellClick(cell)}
-                      onKeyDown={e => !disabled && handleKeyDown(e, cell)}
-                      style={{
-                        display: 'flex', flexDirection: 'column',
-                        alignItems: 'center', justifyContent: 'center',
-                        minHeight: hasHol ? '44px' : '36px',
-                        padding: '2px 1px',
-                        borderRadius: 'var(--radius-control)',
-                        backgroundColor: bg, color: fg, border, cursor,
-                        fontFamily: 'var(--font-body, system-ui)',
-                        fontSize: '12px',
-                        fontWeight: isSelected || cell.isToday ? 500 : 400,
-                        transition: 'background-color 160ms ease, border-color 160ms ease',
-                        outline: 'none',
-                        textDecoration: busy && !cell.isPast ? 'line-through' : 'none',
-                        opacity: cell.isPast ? 0.38 : 1,
-                        userSelect: 'none', gap: '2px',
-                      }}
-                      onMouseEnter={e => {
-                        if (!disabled && !isSelected)
-                          e.currentTarget.style.backgroundColor =
-                            hasHol ? 'rgba(232,163,23,0.18)' : 'var(--color-surface-alt)';
-                      }}
-                      onMouseLeave={e => {
-                        if (!disabled && !isSelected)
-                          e.currentTarget.style.backgroundColor = bg;
-                      }}
-                    >
-                      <span>{cell.day}</span>
-                      {hasHol && <FestivalMicro festivals={hols} selected={isSelected} />}
-                    </div>
+                  if (isSelected) {
+                    bg = 'var(--color-primary)'; fg = '#fff';
+                    border = '1px solid var(--color-primary)';
+                  } else if (cell.isToday && !disabled) {
+                    border = '1px solid var(--color-primary)';
+                    fg = 'var(--color-primary)';
+                  } else if (disabled) {
+                    fg = 'var(--color-border-strong)';
+                    cursor = 'default';
+                    if (busy) bg = 'rgba(20,34,77,0.06)';
+                  } else if (hasHol) {
+                    bg = 'rgba(232,163,23,0.10)';
+                  }
 
-                    {/* Inline disabled tooltip */}
-                    {showMsg && (
+                  return (
+                    <div key={cell.iso} style={{ position: 'relative' }}>
                       <div
-                        role="alert"
+                        role={disabled ? undefined : 'button'}
+                        tabIndex={disabled ? -1 : 0}
+                        aria-label={
+                          cell.isPast ? `${cell.iso} — past date` :
+                          busy        ? `${cell.iso} — unavailable` :
+                          hasHol      ? `${cell.iso} — ${hols.map(f => f.title).join(', ')}` :
+                                        `Select ${cell.iso}`
+                        }
+                        aria-disabled={disabled ? 'true' : undefined}
+                        aria-pressed={isSelected ? 'true' : undefined}
+                        onClick={() => handleCellClick(cell)}
+                        onKeyDown={e => !disabled && handleKeyDown(e, cell)}
                         style={{
-                          position: 'absolute',
-                          bottom: 'calc(100% + 4px)', left: '50%',
-                          transform: 'translateX(-50%)',
-                          backgroundColor: 'var(--color-text)', color: '#fff',
+                          display: 'flex', flexDirection: 'column',
+                          alignItems: 'center', justifyContent: 'center',
+                          minHeight: hasHol ? '44px' : '36px',
+                          padding: '2px 1px',
+                          borderRadius: 'var(--radius-control)',
+                          backgroundColor: bg, color: fg, border, cursor,
                           fontFamily: 'var(--font-body, system-ui)',
-                          fontSize: '9px', whiteSpace: 'nowrap',
-                          padding: '4px 8px', borderRadius: '4px',
-                          zIndex: 10, pointerEvents: 'none',
+                          fontSize: '12px',
+                          fontWeight: isSelected || cell.isToday ? 500 : 400,
+                          transition: 'background-color 160ms ease, border-color 160ms ease',
+                          outline: 'none',
+                          textDecoration: busy && !cell.isPast ? 'line-through' : 'none',
+                          opacity: cell.isPast ? 0.38 : 1,
+                          userSelect: 'none', gap: '2px',
+                        }}
+                        onMouseEnter={e => {
+                          if (!disabled && !isSelected)
+                            e.currentTarget.style.backgroundColor =
+                              hasHol ? 'rgba(232,163,23,0.18)' : 'var(--color-surface-alt)';
+                        }}
+                        onMouseLeave={e => {
+                          if (!disabled && !isSelected)
+                            e.currentTarget.style.backgroundColor = bg;
                         }}
                       >
-                        {disabledMsg.msg}
-                        <span style={{
-                          position: 'absolute', bottom: '-4px', left: '50%',
-                          transform: 'translateX(-50%)',
-                          borderLeft: '4px solid transparent',
-                          borderRight: '4px solid transparent',
-                          borderTop: '4px solid var(--color-text)',
-                        }} />
+                        <span>{cell.day}</span>
+                        {hasHol && <FestivalMicro festivals={hols} selected={isSelected} />}
                       </div>
-                    )}
-                  </div>
-                );
-              })}
+
+                      {/* Inline disabled tooltip */}
+                      {showMsg && (
+                        <div
+                          role="alert"
+                          style={{
+                            position: 'absolute',
+                            bottom: 'calc(100% + 4px)', left: '50%',
+                            transform: 'translateX(-50%)',
+                            backgroundColor: 'var(--color-text)', color: '#fff',
+                            fontFamily: 'var(--font-body, system-ui)',
+                            fontSize: '9px', whiteSpace: 'nowrap',
+                            padding: '4px 8px', borderRadius: '4px',
+                            zIndex: 10, pointerEvents: 'none',
+                          }}
+                        >
+                          {disabledMsg.msg}
+                          <span style={{
+                            position: 'absolute', bottom: '-4px', left: '50%',
+                            transform: 'translateX(-50%)',
+                            borderLeft: '4px solid transparent',
+                            borderRight: '4px solid transparent',
+                            borderTop: '4px solid var(--color-text)',
+                          }} />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>

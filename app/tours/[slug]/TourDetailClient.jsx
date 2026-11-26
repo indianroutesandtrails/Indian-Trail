@@ -17,8 +17,13 @@ function formatDate(isoStr) {
 }
 
 export default function TourDetailClient({ tour }) {
-  const { t, lang } = useLang();
+  const { t, lang, localized } = useLang();
   const today = new Date();
+
+  // Format duration in locale-appropriate way
+  const durationLabel = lang === 'es'
+    ? `${tour.duration} días / ${tour.nights} noches`
+    : `${tour.duration} Days / ${tour.nights} Nights`;
 
   // Festival matches for this journey
   const festivalLinks = getFestivalsForJourney(tour.slug);
@@ -40,7 +45,7 @@ export default function TourDetailClient({ tour }) {
         <div className="absolute inset-0">
           <Image
             src={tour.featuredImage}
-            alt={`${tour.title} — Indian Routes & Trails`}
+            alt={`${localized(tour.title)} — Indian Routes & Trails`}
             fill priority className="object-cover" sizes="100vw"
           />
           <div className="absolute inset-0"
@@ -55,12 +60,12 @@ export default function TourDetailClient({ tour }) {
             style={{ color: 'rgba(255,255,255,0.5)' }}
             onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.88)'}
             onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.5)'}>
-            <ArrowLeft size={13} /> All Journeys
+            <ArrowLeft size={13} /> {t('tour_detail.all_journeys')}
           </Link>
           <div className="flex flex-wrap items-center gap-3 mb-5">
             <span className="flex items-center gap-1.5 px-3 py-1.5 font-sans text-[10px] tracking-wider uppercase"
               style={{ backgroundColor: 'rgba(27,42,94,0.88)', color: '#fff', borderRadius: 'var(--radius-pill)' }}>
-              <Clock size={11} /> {tour.duration} Days / {tour.nights} Nights
+              <Clock size={11} /> {durationLabel}
             </span>
             <span className="flex items-center gap-1.5 px-3 py-1.5 font-sans text-[10px] tracking-wider uppercase"
               style={{
@@ -93,11 +98,11 @@ export default function TourDetailClient({ tour }) {
                 : undefined,
               lineHeight: tour.heroTitleSize === 'compact' ? 1.02 : undefined,
             }}>
-            {tour.title}
+            {localized(tour.title)}
           </h1>
           <p className="font-sans font-light max-w-xl"
             style={{ color: 'rgba(255,255,255,0.62)', fontSize: '1rem' }}>
-            {tour.subtitle}
+            {localized(tour.subtitle)}
           </p>
         </div>
       </section>
@@ -130,21 +135,21 @@ export default function TourDetailClient({ tour }) {
 
               {/* Overview */}
               <div>
-                <p className="eyebrow mb-4">Overview</p>
+                <p className="eyebrow mb-4">{t('tour_detail.overview_heading')}</p>
                 <h2 className="font-serif text-2xl font-light mb-5"
                   style={{ color: 'var(--color-text)' }}>
-                  About This Journey
+                  {t('tour_detail.about_journey')}
                 </h2>
                 <div className="divider-gold mb-7" />
-                <p className="body-large">{tour.overview}</p>
+                <p className="body-large">{localized(tour.overview)}</p>
               </div>
 
               {/* Highlights */}
               <div>
-                <p className="eyebrow mb-4">Highlights</p>
+                <p className="eyebrow mb-4">{t('tour_detail.highlights_heading')}</p>
                 <h2 className="font-serif text-2xl font-light mb-5"
                   style={{ color: 'var(--color-text)' }}>
-                  Journey Highlights
+                  {t('tour_detail.highlights')}
                 </h2>
                 <div className="divider-gold mb-7" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
@@ -159,7 +164,7 @@ export default function TourDetailClient({ tour }) {
                         style={{ color: 'var(--color-secondary)' }} />
                       <span className="font-sans text-sm font-light leading-relaxed"
                         style={{ color: 'var(--color-text-muted)' }}>
-                        {h}
+                        {localized(h)}
                       </span>
                     </div>
                   ))}
@@ -169,10 +174,10 @@ export default function TourDetailClient({ tour }) {
               {/* Festival match block */}
               {festivalMatches.length > 0 && (
                 <div>
-                  <p className="eyebrow mb-4">Festival Timing</p>
+                  <p className="eyebrow mb-4">{t('tour_detail.festival_timing')}</p>
                   <h2 className="font-serif text-2xl font-light mb-5"
                     style={{ color: 'var(--color-text)' }}>
-                    Time Your Journey
+                    {t('tour_detail.time_your_journey')}
                   </h2>
                   <div className="divider-gold mb-7" />
                   <div className="space-y-4">
@@ -203,7 +208,7 @@ export default function TourDetailClient({ tour }) {
                                   ? 'var(--color-secondary-hover)' : 'var(--color-primary)',
                                 borderRadius: '4px',
                               }}>
-                              {matchStrength} match
+                              {t(`tour_detail.${matchStrength === 'perfect' ? 'perfect_match' : 'good_match'}`)}
                             </span>
                           </div>
                           <p className="font-sans text-sm mb-2"
@@ -213,10 +218,10 @@ export default function TourDetailClient({ tour }) {
                           {next && (
                             <p className="font-sans text-xs"
                               style={{ color: 'var(--color-text-muted)' }}>
-                              Next: {formatDate(next.start)}
+                              {t('tour_detail.next_occurrence')}: {formatDate(next.start)}
                               {countdown !== null && countdown <= 180 && (
                                 <span style={{ color: 'var(--color-secondary-hover)' }}>
-                                  {' '}· {countdown} days away
+                                  {' '}· {countdown} {t('tour_detail.days_away')}
                                 </span>
                               )}
                             </p>
@@ -243,13 +248,13 @@ export default function TourDetailClient({ tour }) {
                   <div>
                     <p className="font-sans text-xs font-semibold uppercase tracking-widest mb-2"
                       style={{ color: 'var(--color-accent)' }}>
-                      Important Planning Notes
+                      {t('tour_detail.planning_heading')}
                     </p>
                     <ul className="space-y-1.5">
                       {tour.planningNotes.map((note, i) => (
                         <li key={i} className="font-sans text-sm font-light leading-relaxed"
                           style={{ color: 'var(--color-text)' }}>
-                          {note}
+                          {localized(note)}
                         </li>
                       ))}
                     </ul>
@@ -259,22 +264,29 @@ export default function TourDetailClient({ tour }) {
 
               {/* Day-by-day itinerary */}
               <div>
-                <p className="eyebrow mb-4">Day by Day</p>
+                <p className="eyebrow mb-4">{t('tour_detail.day_by_day')}</p>
                 <h2 className="font-serif text-2xl font-light mb-5"
                   style={{ color: 'var(--color-text)' }}>
-                  Detailed Itinerary
+                  {t('tour_detail.detailed_itinerary')}
                 </h2>
                 <div className="divider-gold mb-7" />
-                <ItineraryTimeline days={tour.days} />
+                <ItineraryTimeline days={tour.days.map(d => ({
+                  ...d,
+                  title:       localized(d.title),
+                  description: localized(d.description),
+                  activities:  (d.activities || []).map(a => localized(a)),
+                  transport:   localized(d.transport),
+                  notes:       localized(d.notes),
+                }))} />
               </div>
 
               {/* En-route options */}
               {tour.enrouteOptions?.length > 0 && (
                 <div>
-                  <p className="eyebrow mb-4">Flexibility</p>
+                  <p className="eyebrow mb-4">{t('tour_detail.flexibility')}</p>
                   <h2 className="font-serif text-2xl font-light mb-5"
                     style={{ color: 'var(--color-text)' }}>
-                    En-Route Options
+                    {t('tour_detail.enroute')}
                   </h2>
                   <div className="divider-gold mb-7" />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -287,15 +299,15 @@ export default function TourDetailClient({ tour }) {
                         }}>
                         <span className="font-sans text-[9px] tracking-[0.25em] uppercase block mb-2"
                           style={{ color: 'var(--color-primary)' }}>
-                          Optional Stop
+                          {t('tour_detail.optional_stop')}
                         </span>
                         <h4 className="font-serif text-lg font-light mb-2"
                           style={{ color: 'var(--color-text)' }}>
-                          {opt.label}
+                          {localized(opt.label)}
                         </h4>
                         <p className="font-sans text-sm font-light leading-relaxed"
                           style={{ color: 'var(--color-text-muted)' }}>
-                          {opt.note}
+                          {localized(opt.note)}
                         </p>
                       </div>
                     ))}
@@ -306,10 +318,10 @@ export default function TourDetailClient({ tour }) {
               {/* Optional experiences */}
               {tour.optionalExperiences?.length > 0 && (
                 <div>
-                  <p className="eyebrow mb-4">Add-Ons</p>
+                  <p className="eyebrow mb-4">{t('tour_detail.optional_heading')}</p>
                   <h2 className="font-serif text-2xl font-light mb-5"
                     style={{ color: 'var(--color-text)' }}>
-                    Optional Experiences
+                    {t('tour_detail.optional_exp')}
                   </h2>
                   <div className="divider-gold mb-7" />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -322,15 +334,15 @@ export default function TourDetailClient({ tour }) {
                         }}>
                         <span className="font-sans text-[9px] tracking-[0.25em] uppercase block mb-2"
                           style={{ color: 'var(--color-primary)' }}>
-                          Optional
+                          {t('common.optional')}
                         </span>
                         <h4 className="font-serif text-lg font-light mb-2"
                           style={{ color: 'var(--color-text)' }}>
-                          {exp.title}
+                          {localized(exp.title)}
                         </h4>
                         <p className="font-sans text-sm font-light leading-relaxed"
                           style={{ color: 'var(--color-text-muted)' }}>
-                          {exp.description}
+                          {localized(exp.description)}
                         </p>
                       </div>
                     ))}
@@ -353,12 +365,11 @@ export default function TourDetailClient({ tour }) {
                 </div>
                 <div>
                   <p className="eyebrow mb-2" style={{ color: 'var(--color-success)' }}>
-                    Responsible Tourism
+                    {t('tour_detail.responsible_tourism')}
                   </p>
                   <p className="font-serif text-base italic leading-relaxed"
                     style={{ color: 'var(--color-success)' }}>
-                    &ldquo;Taking into consideration the well-being of animals, we as a responsible tour operator
-                    do not encourage the ride nor any activities related with the animals.&rdquo;
+                    &ldquo;{t('tour_detail.responsible_note')}&rdquo;
                   </p>
                 </div>
               </div>
@@ -378,14 +389,14 @@ export default function TourDetailClient({ tour }) {
                   <div className="px-5 pt-5 pb-2">
                     <p className="font-sans text-[10px] tracking-[0.22em] uppercase"
                       style={{ color: 'var(--color-text-muted)' }}>
-                      Journey at a Glance
+                      {t('tour_detail.glance')}
                     </p>
                   </div>
                   {[
-                    { label: 'Duration',     value: `${tour.duration} Days / ${tour.nights} Nights` },
-                    { label: 'Best Season',  value: tour.season },
-                    { label: 'Destinations', value: `${tour.route.length} Cities` },
-                    { label: 'Pricing',      value: 'Request a Quote' },
+                    { label: t('tour_detail.duration'),     value: durationLabel },
+                    { label: t('tour_detail.best_season'),  value: tour.season },
+                    { label: t('tour_detail.destinations'), value: `${tour.route.length} ${t('tour_detail.cities')}` },
+                    { label: t('tour_detail.pricing'),      value: t('common.request_quote') },
                   ].map(({ label, value }) => (
                     <div key={label} className="flex items-center justify-between px-5 py-3"
                       style={{ borderTop: '1px solid var(--color-border)' }}>
@@ -395,8 +406,8 @@ export default function TourDetailClient({ tour }) {
                       </span>
                       <span className="font-sans text-sm"
                         style={{
-                          color: value === 'Request a Quote' ? 'var(--color-secondary-hover)' : 'var(--color-text)',
-                          fontStyle: value === 'Request a Quote' ? 'italic' : 'normal',
+                          color: value === t('common.request_quote') ? 'var(--color-secondary-hover)' : 'var(--color-text)',
+                          fontStyle: value === t('common.request_quote') ? 'italic' : 'normal',
                         }}>
                         {value}
                       </span>
@@ -412,7 +423,7 @@ export default function TourDetailClient({ tour }) {
                         style={{ borderRadius: 'var(--radius-control)' }}>
                         <Image
                           src={img}
-                          alt={`${tour.title} gallery image ${i + 1}`}
+                          alt={`${localized(tour.title)} gallery image ${i + 1}`}
                           fill
                           className="object-cover hover:scale-110 transition-transform duration-500"
                           sizes="100px"
@@ -431,11 +442,11 @@ export default function TourDetailClient({ tour }) {
                   }}>
                   <h3 className="font-serif text-xl font-light mb-1.5"
                     style={{ color: 'var(--color-text)' }}>
-                    Plan This Journey
+                    {t('tour_detail.plan_this_journey')}
                   </h3>
                   <p className="font-sans text-sm font-light mb-5 leading-relaxed"
                     style={{ color: 'var(--color-text-muted)' }}>
-                    Om will personally respond to your enquiry.
+                    {t('tour_detail.share_your_vision')}
                   </p>
                   <EnquiryForm defaultTour={tour.slug} />
                 </div>
@@ -450,19 +461,21 @@ export default function TourDetailClient({ tour }) {
         style={{ backgroundColor: 'var(--color-primary-dark)' }}>
         <div className="container-narrow text-center">
           <p className="eyebrow mb-4" style={{ color: 'var(--color-secondary)' }}>
-            Begin This Journey
+            {lang === 'es' ? 'Comienza Este Viaje' : 'Begin This Journey'}
           </p>
           <h2 className="font-serif text-3xl font-light mb-5"
             style={{ color: 'var(--color-text-invert)' }}>
-            Ready to Experience {tour.title.split(':')[0]}?
+            {t('tour_detail.ready_to_experience')} {localized(tour.title).split(':')[0]}?
           </h2>
           <p className="font-sans text-sm font-light mb-8 max-w-lg mx-auto"
             style={{ color: 'var(--color-text-invert-muted)' }}>
-            Share your vision and Om will craft your India experience.
+            {lang === 'es'
+              ? 'Comparte tu visión y Om diseñará tu experiencia en India.'
+              : 'Share your vision and Om will craft your India experience.'}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href={`/contact?tour=${tour.slug}`} className="btn-hero-primary">
-              Plan My Journey
+              {t('tour_detail.plan_my_journey')}
             </Link>
             <Link
               href="/tours"
@@ -475,7 +488,7 @@ export default function TourDetailClient({ tour }) {
               onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'}
               onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
             >
-              All Journeys
+              {t('tour_detail.all_journeys')}
             </Link>
           </div>
         </div>
@@ -485,7 +498,7 @@ export default function TourDetailClient({ tour }) {
       <RelatedJourneys currentSlug={tour.slug} tours={tours} />
 
       {/* Sticky bottom enquiry bar — appears on scroll */}
-      <StickyEnquiryBar tourSlug={tour.slug} tourTitle={tour.title} />
+      <StickyEnquiryBar tourSlug={tour.slug} tourTitle={localized(tour.title)} />
     </>
   );
 }

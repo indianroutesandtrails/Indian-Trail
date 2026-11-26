@@ -3,8 +3,10 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { MessageCircle } from 'lucide-react';
 import { siteConfig } from '@/data/siteContent';
+import { useLang } from '@/lib/LanguageContext';
 
 export default function StickyEnquiryBar({ tourSlug, tourTitle }) {
+  const { lang, t } = useLang();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -13,8 +15,11 @@ export default function StickyEnquiryBar({ tourSlug, tourTitle }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  const shortTitle = tourTitle.split(':')[0];
   const waText = encodeURIComponent(
-    `Hi Om, I'm interested in the journey: ${tourTitle}. Could you please share more details?`
+    lang === 'es'
+      ? `Hola Om, estoy interesado en el viaje: ${tourTitle}. ¿Podría compartirme más detalles?`
+      : `Hi Om, I'm interested in the journey: ${tourTitle}. Could you please share more details?`
   );
 
   return (
@@ -31,9 +36,15 @@ export default function StickyEnquiryBar({ tourSlug, tourTitle }) {
     >
       <div className="container-luxury py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
         <p className="font-serif text-sm font-light" style={{ color: 'rgba(255,255,255,0.75)' }}>
-          <span className="hidden sm:inline">Interested in </span>
-          <em style={{ color: 'var(--color-secondary)' }}>{tourTitle.split(':')[0]}</em>
-          <span className="hidden sm:inline">? Om will personally design it for you.</span>
+          <span className="hidden sm:inline">
+            {lang === 'es' ? '¿Interesado en ' : 'Interested in '}
+          </span>
+          <em style={{ color: 'var(--color-secondary)' }}>{shortTitle}</em>
+          <span className="hidden sm:inline">
+            {lang === 'es'
+              ? '? Om lo diseñará personalmente para ti.'
+              : '? Om will personally design it for you.'}
+          </span>
         </p>
         <div className="flex items-center gap-3 shrink-0">
           <a
@@ -53,7 +64,7 @@ export default function StickyEnquiryBar({ tourSlug, tourTitle }) {
             href={`/contact?tour=${tourSlug}`}
             className="btn-primary text-[11px] py-2.5 px-5"
           >
-            Enquire Now
+            {t('common.enquire_now')}
           </Link>
         </div>
       </div>

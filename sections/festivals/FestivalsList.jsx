@@ -10,9 +10,9 @@ import { Calendar, MapPin, ArrowRight, Clock } from 'lucide-react';
 
 /* ── Filter definitions ─────────────────────────────────────────── */
 const REGION_FILTERS = [
-  { id: 'all',   label: 'All Festivals' },
-  { id: 'north', label: 'North India' },
-  { id: 'south', label: 'South India' },
+  { id: 'all',   labelKey: 'festivals_page.filter_all'   },
+  { id: 'north', labelKey: 'festivals_page.filter_north' },
+  { id: 'south', labelKey: 'festivals_page.filter_south' },
 ];
 
 const MONTHS = ['All', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -37,7 +37,7 @@ function matchesRegion(festival, region) {
 
 /* ── Inner component (uses useSearchParams) ──────────────────────── */
 function FestivalsListInner() {
-  const { lang } = useLang();
+  const { lang, t, localized } = useLang();
   const router       = useRouter();
   const searchParams = useSearchParams();
   const today = new Date();
@@ -114,7 +114,7 @@ function FestivalsListInner() {
                 onFocus={(e)  => { e.currentTarget.style.boxShadow = '0 0 0 2px rgba(232,163,23,0.5)'; }}
                 onBlur={(e)   => { e.currentTarget.style.boxShadow = 'none'; }}
               >
-                {rf.label}
+                {t(rf.labelKey)}
                 <span style={{
                   marginLeft: '5px',
                   fontSize: '9px',
@@ -130,7 +130,9 @@ function FestivalsListInner() {
             {/* Year selector */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-sans text-[10px] tracking-[0.2em] uppercase mr-1"
-                style={{ color: 'var(--color-text-muted)' }}>Year</span>
+                style={{ color: 'var(--color-text-muted)' }}>
+                {lang === 'es' ? 'Año' : 'Year'}
+              </span>
               {['all', ...years].map((y) => (
                 <button
                   key={y}
@@ -143,16 +145,18 @@ function FestivalsListInner() {
                     color: selectedYear === y ? '#fff' : 'var(--color-text-muted)',
                     borderRadius: 'var(--radius-control)',
                   }}>
-                  {y === 'all' ? 'All Years' : y}
+                  {y === 'all' ? (lang === 'es' ? 'Todos' : 'All Years') : y}
                 </button>
               ))}
             </div>
 
-            {/* Month rail — horizontal scroll on mobile */}
+            {/* Month rail */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflowX: 'auto', scrollbarWidth: 'none' }}
               className="hide-scrollbar">
               <span className="font-sans text-[10px] tracking-[0.2em] uppercase mr-1 shrink-0"
-                style={{ color: 'var(--color-text-muted)' }}>Month</span>
+                style={{ color: 'var(--color-text-muted)' }}>
+                {lang === 'es' ? 'Mes' : 'Month'}
+              </span>
               {MONTHS.map((m) => (
                 <button
                   key={m}
@@ -218,8 +222,8 @@ function FestivalsListInner() {
                               : 'rgba(192,69,59,0.85)',
                           color: '#fff',
                         }}>
-                          {festival.region === 'pan-india' ? 'Pan-India' :
-                           festival.region === 'north' ? 'North India' : 'South India'}
+                          {festival.region === 'pan-india' ? (lang === 'es' ? 'Toda la India' : 'Pan-India') :
+                           festival.region === 'north' ? t('festivals_page.filter_north') : t('festivals_page.filter_south')}
                         </span>
                       </div>
 
@@ -231,7 +235,9 @@ function FestivalsListInner() {
                             color: 'var(--color-text-on-gold)',
                             borderRadius: 'var(--radius-pill)',
                           }}>
-                          {countdown === 0 ? 'Today!' : `${countdown} days away`}
+                          {countdown === 0
+                            ? (lang === 'es' ? '¡Hoy!' : 'Today!')
+                            : `${countdown} ${t('festivals_page.days_away')}`}
                         </div>
                       )}
 
@@ -257,7 +263,7 @@ function FestivalsListInner() {
                       href={`/festivals/${festival.slug}`}
                       className="inline-flex items-center gap-2 font-sans text-xs tracking-[0.2em] uppercase"
                       style={{ color: 'var(--color-primary)' }}>
-                      Full Festival Guide
+                      {lang === 'es' ? 'Guía completa del festival' : 'Full Festival Guide'}
                       <ArrowRight size={13} />
                     </Link>
                   </div>
@@ -274,14 +280,16 @@ function FestivalsListInner() {
                       <div className="px-5 pt-5 pb-3">
                         <p className="font-sans text-[10px] tracking-[0.22em] uppercase"
                           style={{ color: 'var(--color-text-muted)' }}>
-                          Upcoming Dates
+                          {t('festivals_page.upcoming')}
                         </p>
                       </div>
                       {festival.dates.length === 0 ? (
                         <div className="px-5 pb-5" style={{ borderTop: '1px solid var(--color-border)', paddingTop: '12px' }}>
                           <p className="font-sans text-xs italic"
                             style={{ color: 'var(--color-text-muted)' }}>
-                            Date to be confirmed — enquire with Om for the latest information.
+                            {lang === 'es'
+                              ? 'Fecha por confirmar — consulta a Om para información actualizada.'
+                              : 'Date to be confirmed — enquire with Om for the latest information.'}
                           </p>
                         </div>
                       ) : (
@@ -317,7 +325,7 @@ function FestivalsListInner() {
                                     {isPast && (
                                       <p className="font-sans text-[9px] uppercase tracking-wider mt-1"
                                         style={{ color: 'var(--color-error)' }}>
-                                        Passed
+                                        {lang === 'es' ? 'Pasado' : 'Passed'}
                                       </p>
                                     )}
                                   </div>
@@ -339,7 +347,7 @@ function FestivalsListInner() {
                         <div className="px-5 pt-5 pb-3">
                           <p className="font-sans text-[10px] tracking-[0.22em] uppercase"
                             style={{ color: 'var(--color-text-muted)' }}>
-                            Matching Journeys
+                            {lang === 'es' ? 'Viajes relacionados' : 'Matching Journeys'}
                           </p>
                         </div>
                         {linkedJourneys.slice(0, 3).map(({ tour, hook, matchStrength }) => (
@@ -366,7 +374,7 @@ function FestivalsListInner() {
                             <div className="flex-1 min-w-0">
                               <p className="font-sans text-xs font-medium leading-snug mb-1"
                                 style={{ color: 'var(--color-text)' }}>
-                                {tour.title}
+                                {localized(tour.title)}
                               </p>
                               <p className="font-sans text-[11px] leading-relaxed"
                                 style={{ color: 'var(--color-text-muted)' }}>
@@ -376,7 +384,7 @@ function FestivalsListInner() {
                                 <Clock size={10} style={{ color: 'var(--color-text-muted)' }} />
                                 <span className="font-sans text-[10px]"
                                   style={{ color: 'var(--color-text-muted)' }}>
-                                  {tour.duration} days
+                                  {tour.duration} {lang === 'es' ? 'días' : 'days'}
                                 </span>
                               </div>
                             </div>
@@ -396,13 +404,13 @@ function FestivalsListInner() {
         {filtered.length === 0 && (
           <div className="text-center py-20">
             <p className="font-serif text-xl italic" style={{ color: 'var(--color-text-muted)' }}>
-              No festivals match your selection.
+              {t('festivals_page.no_results')}
             </p>
             <button
               onClick={() => { setSelectedRegion('all'); setSelectedYear('all'); setSelectedMonth('All'); }}
               className="mt-4 font-sans text-xs tracking-[0.2em] uppercase"
               style={{ color: 'var(--color-primary)', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}>
-              Reset Filters
+              {lang === 'es' ? 'Restablecer filtros' : 'Reset Filters'}
             </button>
           </div>
         )}
@@ -411,18 +419,22 @@ function FestivalsListInner() {
         <div className="mt-20 p-10 md:p-14 text-center"
           style={{ backgroundColor: 'var(--color-primary)', borderRadius: 'var(--radius-card)' }}>
           <p className="eyebrow mb-4" style={{ color: 'var(--color-text-invert-muted)' }}>
-            Time Your Journey
+            {lang === 'es' ? 'Planea tu viaje' : 'Time Your Journey'}
           </p>
           <h3 className="font-serif text-2xl font-light mb-4"
             style={{ color: 'var(--color-text-invert)' }}>
-            Want to Experience India at Festival Time?
+            {lang === 'es'
+              ? '¿Quieres vivir India en tiempo de festival?'
+              : 'Want to Experience India at Festival Time?'}
           </h3>
           <p className="font-sans text-sm font-light mb-7 max-w-lg mx-auto"
             style={{ color: 'var(--color-text-invert-muted)' }}>
-            Om will build your dates around the festival — so you arrive exactly when India is at its most alive.
+            {lang === 'es'
+              ? 'Om diseñará tu viaje alrededor del festival — para que llegues exactamente cuando India está más viva.'
+              : 'Om will build your dates around the festival — so you arrive exactly when India is at its most alive.'}
           </p>
           <Link href="/contact" className="btn-primary inline-flex">
-            Plan Around a Festival
+            {lang === 'es' ? 'Planear con un festival' : 'Plan Around a Festival'}
           </Link>
         </div>
       </div>

@@ -623,6 +623,16 @@
 .filter-bar-scroll::-webkit-scrollbar { display: none; }
 .filter-bar-scroll { scrollbar-width: none; -ms-overflow-style: none; }
 
+/* ── Contact page desktop grid ──────────────────────────────────────
+   Info col ~40% / Form col ~60%. Applied via Tailwind arbitrary class
+   lg:grid-cols-contact referencing this CSS variable.
+──────────────────────────────────────────────────────────────────── */
+@media (min-width: 1024px) {
+  .lg\:grid-cols-contact {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  }
+}
+
 /* ── Hide scrollbar (mobile sliders) ───────────────────────────── */
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
@@ -716,7 +726,56 @@ body { overflow-x: hidden; }
   .avail-tab-mobile-wrapper  { display: block; }
 }
 
-/* ── Drawer slide-in animations ─────────────────────────────── */
+/* ── Language edge-tab animation ────────────────────────────────
+   Two-wrapper pattern — same as availability edge tabs:
+     .lang-tab-wrapper  → position:fixed; left:0; top:50%; translateY(-50%)  [never animated]
+     .lang-tab-nudge    → translateX(...)  [horizontal float only]
+
+   Float: 10px inward travel, 3.0s ease-in-out, infinite alternate.
+   Paused via .lang-tab-nudge--paused (hover / focus / open).
+   Disabled under prefers-reduced-motion.
+──────────────────────────────────────────────────────────────── */
+@keyframes lang-edge-float {
+  from { transform: translateX(0px);   }
+  to   { transform: translateX(-10px); }
+}
+
+.lang-tab-nudge {
+  display:                   block;
+  animation-name:            lang-edge-float;
+  animation-duration:        3.0s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction:       alternate;
+  animation-fill-mode:       both;
+  will-change:               transform;
+}
+
+.lang-tab-nudge--paused {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lang-tab-nudge {
+    animation:   none !important;
+    transform:   translateX(0px) !important;
+    transition:  none !important;
+    will-change: auto !important;
+  }
+}
+
+/* ── Hero header clearance — mobile + desktop tokens ────────────
+   Hero sections use paddingTop to clear the fixed navbar.
+   Use the correct token per breakpoint to avoid overlap or excess gap.
+──────────────────────────────────────────────────────────────── */
+.hero-header-clearance {
+  padding-top: var(--header-height-mobile);
+}
+@media (min-width: 1024px) {
+  .hero-header-clearance {
+    padding-top: var(--header-height-desktop);
+  }
+}
 @keyframes slideInRight {
   from { transform: translateX(100%); }
   to   { transform: translateX(0);    }

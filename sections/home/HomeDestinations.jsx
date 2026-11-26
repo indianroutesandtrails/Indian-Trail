@@ -6,6 +6,7 @@ import { getFeaturedDestinations } from '@/data/destinations';
 import { resolveDestImage } from '@/lib/destImage';
 import { useCarousel } from '@/hooks/useCarousel';
 import { ArrowRight } from 'lucide-react';
+import { useLang } from '@/lib/LanguageContext';
 
 /* ── mobile detection ───────────────────────────────────────────── */
 function useIsMobile() {
@@ -208,6 +209,7 @@ export default function HomeDestinations() {
   const featured = getFeaturedDestinations();
   const isMobile = useIsMobile();
   const { index, goTo, touchHandlers } = useCarousel(featured.length, 1);
+  const { t } = useLang();
 
   return (
     <section className="section-padding" style={{ backgroundColor: 'var(--color-bg)' }}>
@@ -216,11 +218,11 @@ export default function HomeDestinations() {
         {/* header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-8">
           <div>
-            <p className="eyebrow mb-3">India Through Our Eyes</p>
+            <p className="eyebrow mb-3">{t('home_destinations.eyebrow')}</p>
             <h2 className="section-title">
-              Cities That<br />
+              {t('home_destinations.heading1')}<br />
               <em className="font-light" style={{ color: 'var(--color-primary-light)' }}>
-                Stay With You
+                {t('home_destinations.heading2')}
               </em>
             </h2>
           </div>
@@ -228,7 +230,7 @@ export default function HomeDestinations() {
             href="/destinations"
             className="btn-link-secondary group flex items-center gap-2 shrink-0"
           >
-            All Destinations
+            {t('home_destinations.all_link')}
             <ArrowRight size={13} className="transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </div>

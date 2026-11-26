@@ -5,24 +5,21 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { shortTrips } from '@/data/shortTrips';
+import { shortTrips, shortTripsPageContent, EXPERIENCES_DATA } from '@/data/shortTrips';
 import { siteConfig } from '@/data/siteContent';
+import { useLang } from '@/lib/LanguageContext';
 import {
   MapPin, Clock, Sun, ArrowRight, MessageCircle, ChevronRight,
   Bird, Camera, Landmark, ShoppingBag, Leaf,
 } from 'lucide-react';
 
-/* ── Filters ────────────────────────────────────────────────────── */
-const FILTERS = [
-  { id: 'all',       label: 'All' },
-  { id: 'delhi',     label: 'From Delhi' },
-  { id: 'jaipur',    label: 'From Jaipur' },
-  { id: 'day-trip',  label: 'Day Trip' },
-  { id: 'overnight', label: 'Overnight' },
-  { id: 'heritage',  label: 'Heritage' },
-  { id: 'wildlife',  label: 'Wildlife' },
-  { id: 'culture',   label: 'Culture' },
-];
+/* ── Filters — built from shortTripsPageContent so labels are locale-aware ── */
+const FILTER_IDS = ['all', 'delhi', 'jaipur', 'day-trip', 'overnight', 'heritage', 'wildlife', 'culture'];
+const FILTER_KEY_MAP = {
+  'all': 'all', 'delhi': 'delhi', 'jaipur': 'jaipur',
+  'day-trip': 'dayTrip', 'overnight': 'overnight',
+  'heritage': 'heritage', 'wildlife': 'wildlife', 'culture': 'culture',
+};
 
 function matchesFilter(trip, filter, activeVariants) {
   if (filter === 'all') return true;
@@ -49,9 +46,10 @@ function InterestIcon({ interest }) {
 
 /* ── Variant toggle ──────────────────────────────────────────────── */
 function VariantToggle({ trip, activeId, onChange }) {
+  const { localized } = useLang();
   if (trip.variants.length <= 1) return null;
   return (
-    <div role="group" aria-label={`Variant for ${trip.title}`}
+    <div role="group" aria-label={`${localized(trip.title)} variant`}
       style={{
         display: 'inline-flex',
         borderRadius: 'var(--radius-control)',
@@ -75,7 +73,7 @@ function VariantToggle({ trip, activeId, onChange }) {
               transition: 'background-color 160ms, color 160ms',
               outline: 'none',
             }}>
-            {v.label}
+            {localized(v.label)}
           </button>
         );
       })}
@@ -84,15 +82,11 @@ function VariantToggle({ trip, activeId, onChange }) {
 }
 
 /* ── Trip card ──────────────────────────────────────────────────────
-   BADGE STYLES restored to original compact translucent design:
-   - type: small pill, rgba(27,42,94,0.78) dark indigo, white text
-   - origin: plain text "Jaipur"/"Delhi" (no "From" prefix in badge)
-   - duration: bottom-right, rgba(20,20,43,0.72), white
-   - Padding: 3px vertical / 8px horizontal, 9px font, 999px radius
-   This matches the pre-restyle design visible in original screenshots.
+   BADGE STYLES restored to original compact translucent design.
 ────────────────────────────────────────────────────────────────── */
 function TripCard({ trip, activeVariantId, onVariantChange }) {
   const [hovered, setHovered] = useState(false);
+  const { localized, lang } = useLang();
   const v = trip.variants.find((x) => x.id === activeVariantId) ?? trip.variants[0];
 
   const enquireHref = `/contact?shortTrip=${encodeURIComponent(trip.slug)}&variant=${encodeURIComponent(activeVariantId)}`;
@@ -100,8 +94,10 @@ function TripCard({ trip, activeVariantId, onVariantChange }) {
     ? `/short-trips/${trip.slug}?variant=${activeVariantId}`
     : `/short-trips/${trip.slug}`;
 
-  const typeBadge   = v.type === 'overnight' ? 'Overnight' : 'Day Trip';
-  const originLabel = v.origin; // "Delhi" or "Jaipur" — no prefix per original design
+  const typeBadge   = v.type === 'overnight'
+    ? localized(shortTripsPageContent.typeBadge.overnight)
+    : localized(shortTripsPageContent.typeBadge.dayTrip);
+  const originLabel = v.origin;
 
   return (
     <article
@@ -121,7 +117,7 @@ function TripCard({ trip, activeVariantId, onVariantChange }) {
       {/* Image 4:3 */}
       <div style={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden', flexShrink: 0 }}>
         <Image src={trip.image}
-          alt={`${trip.title} — Indian Routes & Trails`}
+          alt={`${localized(trip.title)} — Indian Routes & Trails`}
           fill className="object-cover"
           style={{ transform: hovered ? 'scale(1.04)' : 'scale(1)', transition: 'transform 600ms ease' }}
           sizes="(max-width:767px) 100vw, (max-width:1023px) 50vw, 33vw" />
@@ -162,7 +158,7 @@ function TripCard({ trip, activeVariantId, onVariantChange }) {
             padding: '3px 8px', borderRadius: '999px',
             backgroundColor: 'rgba(20,20,43,0.72)', color: '#fff',
           }}>
-            {v.duration}
+            {localized(v.duration)}
           </span>
         </div>
       </div>
@@ -184,7 +180,7 @@ function TripCard({ trip, activeVariantId, onVariantChange }) {
           fontSize: '1.15rem', fontWeight: 400, lineHeight: 1.2,
           color: 'var(--color-text)', margin: 0,
         }}>
-          {trip.title}
+          {localized(trip.title)}
         </h3>
 
         <p style={{
@@ -192,14 +188,14 @@ function TripCard({ trip, activeVariantId, onVariantChange }) {
           fontSize: '0.82rem', lineHeight: 1.65,
           color: 'var(--color-text-muted)', margin: 0,
         }}>
-          {trip.summary}
+          {localized(trip.summary)}
         </p>
 
         {/* Practical info */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', alignItems: 'center' }}>
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px',
             fontFamily: 'var(--font-body, system-ui)', fontSize: '10px', color: 'var(--color-text-muted)' }}>
-            <Clock size={11} aria-hidden="true" /> {v.duration}
+            <Clock size={11} aria-hidden="true" /> {localized(v.duration)}
           </span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px',
             fontFamily: 'var(--font-body, system-ui)', fontSize: '10px', color: 'var(--color-text-muted)' }}>
@@ -226,7 +222,7 @@ function TripCard({ trip, activeVariantId, onVariantChange }) {
                 flexShrink: 0, marginTop: '5px',
               }} aria-hidden="true" />
               <span style={{ fontFamily: 'var(--font-body, system-ui)', fontSize: '11px', lineHeight: 1.5, color: 'var(--color-text-muted)' }}>
-                {h}
+                {localized(h)}
               </span>
             </li>
           ))}
@@ -246,7 +242,7 @@ function TripCard({ trip, activeVariantId, onVariantChange }) {
             color: 'var(--color-text-muted)', textDecoration: 'none',
             minHeight: '44px',
           }}>
-            View Details <ArrowRight size={12} aria-hidden="true" />
+          {localized(shortTripsPageContent.card.viewDetails)} <ArrowRight size={12} aria-hidden="true" />
           </Link>
 
           {/* Enquire → /contact — indigo button, NO WhatsApp icon */}
@@ -266,7 +262,7 @@ function TripCard({ trip, activeVariantId, onVariantChange }) {
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-primary-light)'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-primary)'}
           >
-            Enquire
+            {localized(shortTripsPageContent.card.enquire)}
           </Link>
         </div>
       </div>
@@ -274,21 +270,7 @@ function TripCard({ trip, activeVariantId, onVariantChange }) {
   );
 }
 
-/* ── Experience items ────────────────────────────────────────────── */
-// Images mapped to verified local files in /public/ordinary/ (confirmed to exist).
-// Heritage Walk Mumbai uses /destination/delhi.jpg as fallback (no /ordinary/mumbai file).
-const EXPERIENCES = [
-  { title: 'Heritage Walk in Mumbai — Kala Ghoda', summary: 'A guided colonial heritage walk through Mumbai\'s most atmospheric district — Victorian Gothic, Indo-Saracenic and Art Deco architecture around the original Kala Ghoda cultural quarter.', image: '/ordinary/kala_ghoda.jpg' },
-  { title: 'Hands-on Cooking Experience', summary: 'Learn to cook an authentic Indian meal with a local host — spices, techniques and recipes you can recreate at home.', image: '/ordinary/cooking.jpg' },
-  { title: 'Hand Block Printing Experience', summary: 'Work directly with traditional Rajasthani block-printing artisans — choose your block, mix your colour and create your own printed fabric to take home.', image: '/ordinary/block_printing.jpg' },
-  { title: 'Blue Pottery Classes', summary: 'Jaipur\'s distinctive turquoise and white ceramic tradition: a studio session with a Blue Pottery master craftsperson.', image: '/ordinary/blue_pottery.jpg' },
-  { title: 'Rural Heritage Train Journey in Deogarh', summary: 'A slow metre-gauge train ride through the Aravalli Hills — one of Rajasthan\'s most evocative and least-visited experiences.', image: '/ordinary/train_journey.jpg' },
-  { title: 'Kerala Backwater Boat Experience', summary: 'A houseboat cruise through the coconut-fringed canals of Kumarakom and Alleppey — a gentle, unhurried introduction to Kerala\'s backwater world.', image: '/ordinary/kerala_boat.jpg' },
-  { title: 'Yoga Retreats and Classes — Rishikesh and Haridwar', summary: 'Practise yoga at the source — Rishikesh\'s riverbank ashrams and the ghats of Haridwar offer an immersive introduction to the living tradition.', image: '/ordinary/yoga_class.jpg' },
-  { title: 'Tuk-Tuk and Rickshaw Ride in New Delhi', summary: 'Navigate the lanes of Old Delhi by cycle-rickshaw and auto-rickshaw — the most direct way to experience the rhythm of the city at street level.', image: '/ordinary/rikshaw_ride.jpg' },
-  { title: 'Boat Ride on Lake Pichola, Udaipur', summary: 'A sunset cruise on Udaipur\'s most iconic lake, passing the Lake Palace and Jag Mandir island palaces as the Aravalli Hills glow in the fading light.', image: '/ordinary/boat_ride_udaipur.jpg' },
-  { title: 'Jaipur Sunset & Nightlife Experience', summary: 'Nahargarh Fort at dusk, the illuminated Pink City from the ramparts, rooftop restaurants in the old city and the vibrant night market of Johari Bazaar.', image: '/ordinary/jaipur_sunset.jpg' },
-];
+/* ── EXPERIENCES_DATA is imported from shortTripsPageContent — localized ── */
 
 /* ── Robust mobile slider hook ──────────────────────────────────────
    Uses actual card offsets via getBoundingClientRect so gaps/padding
@@ -412,6 +394,7 @@ function SliderDots({ count, activeIndex, onDotClick, labelPrefix }) {
 /* ── Mobile Short Trip slider ────────────────────────────────────── */
 function MobileTripSlider({ filtered, activeVariants, onVariantChange }) {
   const { trackRef, activeIndex, goTo } = useMobileSlider(filtered.length);
+  const { lang, localized } = useLang();
 
   return (
     <div>
@@ -452,7 +435,7 @@ function MobileTripSlider({ filtered, activeVariants, onVariantChange }) {
         count={filtered.length}
         activeIndex={activeIndex}
         onDotClick={goTo}
-        labelPrefix="Short Trip"
+        labelPrefix={localized(shortTripsPageContent.sliderDots.shortTrip)}
       />
     </div>
   );
@@ -460,7 +443,8 @@ function MobileTripSlider({ filtered, activeVariants, onVariantChange }) {
 
 /* ── Mobile Experience slider ────────────────────────────────────── */
 function MobileExperienceSlider() {
-  const { trackRef, activeIndex, goTo } = useMobileSlider(EXPERIENCES.length);
+  const { trackRef, activeIndex, goTo } = useMobileSlider(EXPERIENCES_DATA.length);
+  const { localized, lang } = useLang();
 
   return (
     <div>
@@ -482,8 +466,8 @@ function MobileExperienceSlider() {
         }}
         className="hide-scrollbar"
       >
-        {EXPERIENCES.map((exp, i) => (
-          <div key={i} style={{ flex: '0 0 calc(100% - 32px)', scrollSnapAlign: 'center', minWidth: 0 }}>
+        {EXPERIENCES_DATA.map((exp, i) => (
+          <div key={exp.id} style={{ flex: '0 0 calc(100% - 32px)', scrollSnapAlign: 'center', minWidth: 0 }}>
             <div style={{
               backgroundColor: 'var(--color-surface)',
               border:          '1px solid var(--color-border)',
@@ -494,21 +478,21 @@ function MobileExperienceSlider() {
               flexDirection:   'column',
             }}>
               <div style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden', flexShrink: 0 }}>
-                <Image src={exp.image} alt={exp.title} fill className="object-cover"
+                <Image src={exp.image} alt={localized(exp.title)} fill className="object-cover"
                   sizes="100vw" style={{ opacity: 0.85 }} />
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(20,34,77,0.55) 0%, transparent 60%)' }} />
               </div>
               <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', flex: 1, gap: '6px' }}>
                 <h3 style={{ fontFamily: 'var(--font-display, Georgia, serif)', fontSize: '1rem', fontWeight: 400, lineHeight: 1.3, color: 'var(--color-text)', margin: 0 }}>
-                  {exp.title}
+                  {localized(exp.title)}
                 </h3>
                 <p style={{ fontFamily: 'var(--font-body, system-ui)', fontSize: '0.78rem', lineHeight: 1.6, color: 'var(--color-text-muted)', margin: 0, flex: 1 }}>
-                  {exp.summary}
+                  {localized(exp.summary)}
                 </p>
                 <div style={{ marginTop: 'auto', paddingTop: '8px' }}>
-                  <Link href={`/contact?interest=experience&experience=${encodeURIComponent(exp.title)}`}
+                  <Link href={`/contact?interest=experience&experience=${encodeURIComponent(localized(exp.title))}`}
                     style={{ fontFamily: 'var(--font-body, system-ui)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--color-primary)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                    Enquire <ArrowRight size={10} aria-hidden="true" />
+                    {localized(shortTripsPageContent.ordinary.enquire)} <ArrowRight size={10} aria-hidden="true" />
                   </Link>
                 </div>
               </div>
@@ -517,10 +501,10 @@ function MobileExperienceSlider() {
         ))}
       </div>
       <SliderDots
-        count={EXPERIENCES.length}
+        count={EXPERIENCES_DATA.length}
         activeIndex={activeIndex}
         onDotClick={goTo}
-        labelPrefix="Experience"
+        labelPrefix={localized(shortTripsPageContent.sliderDots.experience)}
       />
     </div>
   );
@@ -528,24 +512,25 @@ function MobileExperienceSlider() {
 
 /* ── Desktop experience card ─────────────────────────────────────── */
 function ExperienceCard({ exp }) {
+  const { localized } = useLang();
   return (
     <div style={{ backgroundColor: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-card)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       <div style={{ position: 'relative', aspectRatio: '16/9', overflow: 'hidden', flexShrink: 0 }}>
-        <Image src={exp.image} alt={exp.title} fill className="object-cover"
+        <Image src={exp.image} alt={localized(exp.title)} fill className="object-cover"
           sizes="(max-width:767px) 100vw, 33vw" style={{ opacity: 0.85 }} />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(20,34,77,0.55) 0%, transparent 60%)' }} />
       </div>
       <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', flex: 1, gap: '6px' }}>
         <h3 style={{ fontFamily: 'var(--font-display, Georgia, serif)', fontSize: '1rem', fontWeight: 400, lineHeight: 1.3, color: 'var(--color-text)', margin: 0 }}>
-          {exp.title}
+          {localized(exp.title)}
         </h3>
         <p style={{ fontFamily: 'var(--font-body, system-ui)', fontSize: '0.78rem', lineHeight: 1.6, color: 'var(--color-text-muted)', margin: 0, flex: 1 }}>
-          {exp.summary}
+          {localized(exp.summary)}
         </p>
         <div style={{ marginTop: 'auto', paddingTop: '8px' }}>
-          <Link href={`/contact?interest=experience&experience=${encodeURIComponent(exp.title)}`}
+          <Link href={`/contact?interest=experience&experience=${encodeURIComponent(localized(exp.title))}`}
             style={{ fontFamily: 'var(--font-body, system-ui)', fontSize: '9px', fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--color-primary)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-            Enquire <ArrowRight size={10} aria-hidden="true" />
+            {localized(shortTripsPageContent.ordinary.enquire)} <ArrowRight size={10} aria-hidden="true" />
           </Link>
         </div>
       </div>
@@ -557,6 +542,13 @@ function ExperienceCard({ exp }) {
 function ShortTripsInner() {
   const router       = useRouter();
   const searchParams = useSearchParams();
+  const { lang, localized } = useLang();
+
+  // Build locale-aware filter list
+  const FILTERS = FILTER_IDS.map((id) => ({
+    id,
+    label: localized(shortTripsPageContent.filters[FILTER_KEY_MAP[id]]),
+  }));
 
   const [activeFilter, setActiveFilter] = useState(searchParams.get('filter') ?? 'all');
   const [activeVariants, setActiveVariants] = useState(() => {
@@ -595,16 +587,16 @@ function ShortTripsInner() {
           <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(27,42,94,0.65) 0%, transparent 60%)' }} />
         </div>
         <div className="relative w-full container-luxury" style={{ paddingBottom: 'clamp(32px, 5vw, 56px)' }}>
-          <p className="eyebrow mb-3" style={{ color: 'var(--color-secondary)' }}>Short Trips &amp; Day Excursions</p>
+          <p className="eyebrow mb-3" style={{ color: 'var(--color-secondary)' }}>{localized(shortTripsPageContent.hero.eyebrow)}</p>
           <h1 className="font-serif font-light leading-none mb-4"
             style={{ fontSize: 'clamp(2.4rem, 6vw, 4.5rem)', color: 'var(--color-text-invert)', maxWidth: '44rem' }}>
-            Short Trips &amp; Day Excursions
+            {localized(shortTripsPageContent.hero.title)}
           </h1>
           <p className="font-sans font-light mb-7 max-w-xl"
             style={{ fontSize: 'clamp(0.9rem, 1.5vw, 1.05rem)', color: 'rgba(255,255,255,0.68)', lineHeight: 1.7 }}>
-            Remarkable places, thoughtfully arranged for a single day or an unhurried night away.
+            {localized(shortTripsPageContent.hero.description)}
           </p>
-          <Link href="/contact?interest=short-trip" className="btn-hero-primary">Plan My Trip</Link>
+          <Link href="/contact?interest=short-trip" className="btn-hero-primary">{localized(shortTripsPageContent.hero.cta)}</Link>
         </div>
       </section>
 
@@ -655,11 +647,11 @@ function ShortTripsInner() {
           {filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px 0' }}>
               <p className="font-serif text-xl italic mb-4" style={{ color: 'var(--color-text-muted)' }}>
-                No short trips match this filter.
+                {localized(shortTripsPageContent.card.noResults)}
               </p>
               <button onClick={() => setActiveFilter('all')}
                 style={{ fontFamily: 'var(--font-body, system-ui)', fontSize: '10px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--color-primary)', textDecoration: 'underline', background: 'none', border: 'none', cursor: 'pointer' }}>
-                Show all
+                {localized(shortTripsPageContent.card.showAll)}
               </button>
             </div>
           ) : (
@@ -696,19 +688,19 @@ function ShortTripsInner() {
       }}>
         <div className="container-luxury">
           <div style={{ marginBottom: '40px' }}>
-            <p className="eyebrow mb-3" style={{ color: 'var(--color-secondary-hover)' }}>Curated by Om</p>
+            <p className="eyebrow mb-3" style={{ color: 'var(--color-secondary-hover)' }}>{localized(shortTripsPageContent.ordinary.eyebrow)}</p>
             <h2 className="font-serif font-light" style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.75rem)', color: 'var(--color-text)', margin: '0 0 10px' }}>
-              Experience the Ordinary
+              {localized(shortTripsPageContent.ordinary.title)}
             </h2>
             <p className="font-sans font-light max-w-2xl" style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', lineHeight: 1.7, margin: 0 }}>
-              The small encounters that linger longest — a cookfire, a printing block, a paddled canal, a sunrise ghat.
+              {localized(shortTripsPageContent.ordinary.description)}
             </p>
           </div>
 
           {/* Desktop grid */}
           <div className="hidden md:grid"
             style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 260px), 1fr))', gap: '20px' }}>
-            {EXPERIENCES.map((exp, i) => <ExperienceCard key={i} exp={exp} />)}
+            {EXPERIENCES_DATA.map((exp) => <ExperienceCard key={exp.id} exp={exp} />)}
           </div>
 
           {/* Mobile slider */}
@@ -723,13 +715,13 @@ function ShortTripsInner() {
         <div className="container-luxury">
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '20px' }}>
             <div style={{ maxWidth: '36rem' }}>
-              <p className="eyebrow mb-2" style={{ color: 'var(--color-secondary)' }}>Extend Your Stay</p>
+              <p className="eyebrow mb-2" style={{ color: 'var(--color-secondary)' }}>{localized(shortTripsPageContent.combine.eyebrow)}</p>
               <h2 className="font-serif font-light mb-3"
                 style={{ fontSize: 'clamp(1.5rem, 3vw, 2.2rem)', color: 'var(--color-text-invert)', lineHeight: 1.2 }}>
-                Add a short trip to any of our journeys.
+                {localized(shortTripsPageContent.combine.title)}
               </h2>
               <p className="font-sans font-light" style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.92rem', lineHeight: 1.7 }}>
-                Every multi-day journey can be enriched with a day excursion before or after. Om will design the connection seamlessly.
+                {localized(shortTripsPageContent.combine.description)}
               </p>
             </div>
             <Link href="/tours"
@@ -744,7 +736,7 @@ function ShortTripsInner() {
               }}
               onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.10)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.65)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.35)'; }}>
-              View All Journeys <ChevronRight size={14} aria-hidden="true" />
+              {localized(shortTripsPageContent.combine.cta)} <ChevronRight size={14} aria-hidden="true" />
             </Link>
           </div>
         </div>
@@ -753,17 +745,17 @@ function ShortTripsInner() {
       {/* FINAL CTA */}
       <section className="section-padding-sm" style={{ backgroundColor: 'var(--color-bg)' }}>
         <div className="container-narrow text-center">
-          <p className="eyebrow mb-4">Ready to Begin?</p>
+          <p className="eyebrow mb-4">{localized(shortTripsPageContent.finalCta.eyebrow)}</p>
           <h2 className="font-serif font-light mb-4"
             style={{ fontSize: 'clamp(1.6rem, 3.5vw, 2.5rem)', color: 'var(--color-text)' }}>
-            Plan a Short Trip Around Your Journey
+            {localized(shortTripsPageContent.finalCta.title)}
           </h2>
           <p className="font-sans font-light mb-8 max-w-lg mx-auto"
             style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', lineHeight: 1.7 }}>
-            Tell Om what interests you and he will arrange it as an extension of your visit or as a standalone day away.
+            {localized(shortTripsPageContent.finalCta.description)}
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '14px' }}>
-            <Link href="/contact?interest=short-trip" className="btn-primary">Enquire Now</Link>
+            <Link href="/contact?interest=short-trip" className="btn-primary">{localized(shortTripsPageContent.finalCta.cta)}</Link>
             <a href={`https://wa.me/${siteConfig.contact.whatsapp}?text=${encodeURIComponent('Hi Om, I\'m interested in a short trip or day excursion. Could you share what\'s possible?')}`}
               target="_blank" rel="noopener noreferrer"
               style={{

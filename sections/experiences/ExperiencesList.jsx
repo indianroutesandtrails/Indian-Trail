@@ -1,32 +1,10 @@
 'use client';
-/*
-  ExperiencesList — category filtering + mobile sliders
-  ─────────────────────────────────────────────────────
-  Desktop/tablet (≥768px):
-    • Segmented category filter row above the card grid.
-    • Categories in first-appearance order:
-      Wildlife → Spiritual → Village → Heritage → Cultural → Wellness
-    • "All Experiences" restores all cards instantly.
-    • URL state: NOT synced (no Suspense wrapper here).
-
-  Mobile (<768px):
-    • Category filter row NOT in DOM.
-    • One grouped section + CSS scroll-snap slider per category.
-    • IntersectionObserver per slider tracks active card independently.
-    • One-card categories: one non-interactive active dot.
-    • Desktop grid and mobile sections never in DOM simultaneously.
-
-  Tour numbers:
-    • Slug-to-number derived from tours data order (not hardcoded),
-      so if tour order changes, numbers stay correct.
-    • "View Tour" buttons show "Tour N · View" or "T1, T2 · View".
-*/
-
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { tours } from '@/data/tours';
+import { useLang } from '@/lib/LanguageContext';
 
 /* ── Tour slug → number, derived from data order ──────────────── */
 const TOUR_NUMBER = Object.fromEntries(
@@ -50,82 +28,109 @@ const EXPERIENCE_IMAGES = {
 /* ── experience data ───────────────────────────────────────────── */
 const experiences = [
   {
-    category: 'Wildlife',
-    title: 'Jeep Safari in Tiger Country',
-    description: 'A dawn jeep safari through the rolling hills, crags and meadows of Ranthambore — one of India\'s finest opportunities to sight the Bengal tiger in the wild.',
-    note: 'Wear warm, full-body clothing. Carry water and refreshments.',
+    category: { en: 'Wildlife', es: 'Naturaleza' },
+    title: { en: 'Jeep Safari in Tiger Country', es: 'Safari en jeep en el país del tigre' },
+    description: {
+      en: 'A dawn jeep safari through the rolling hills, crags and meadows of Ranthambore — one of India\'s finest opportunities to sight the Bengal tiger in the wild.',
+      es: 'Un safari al amanecer por las colinas, riscos y praderas de Ranthambore — una de las mejores oportunidades de India para avistar el tigre de Bengala en estado salvaje.',
+    },
+    note: { en: 'Wear warm, full-body clothing. Carry water and refreshments.', es: 'Viste ropa abrigada y que cubra el cuerpo. Lleva agua y refrigerios.' },
     image: EXPERIENCE_IMAGES['wildlife-safari'],
     tours: ['royal-forts-wilderness-heritage-trail', 'echoes-of-forts-and-forests', 'crowns-citadel-countryside'],
   },
   {
-    category: 'Spiritual',
-    title: 'Ganga Aarti at Dashashwamedh Ghat',
-    description: 'The most elaborate fire ceremony in Varanasi — an ancient ritual at dusk every day. Conch shells, ringing bells and sacred mantras as priests venerate the Ganga.',
-    note: '',
+    category: { en: 'Spiritual', es: 'Espiritual' },
+    title: { en: 'Ganga Aarti at Dashashwamedh Ghat', es: 'Ganga Aarti en Dashashwamedh Ghat' },
+    description: {
+      en: 'The most elaborate fire ceremony in Varanasi — an ancient ritual at dusk every day. Conch shells, ringing bells and sacred mantras as priests venerate the Ganga.',
+      es: 'La más elaborada ceremonia del fuego en Varanasi — un ritual ancestral que se celebra al atardecer cada día. Conchas marinas, campanas y mantras sagrados mientras los sacerdotes veneran el Ganges.',
+    },
+    note: { en: '', es: '' },
     image: EXPERIENCE_IMAGES['ganga-aarti'],
     tours: ['temples-thrones-holy-ghats', 'north-india-unveiled'],
   },
   {
-    category: 'Wildlife',
-    title: 'Sunset Leopard Safari, Rawla Narlai',
-    description: 'The rocky Aravalli terrain around Narlai supports a rare density of leopards. This evening safari in warm, golden light is one of the most intimate wildlife encounters in Rajasthan.',
-    note: '',
+    category: { en: 'Wildlife', es: 'Naturaleza' },
+    title: { en: 'Sunset Leopard Safari, Rawla Narlai', es: 'Safari del leopardo al atardecer, Rawla Narlai' },
+    description: {
+      en: 'The rocky Aravalli terrain around Narlai supports a rare density of leopards. This evening safari in warm, golden light is one of the most intimate wildlife encounters in Rajasthan.',
+      es: 'El terreno rocoso de los Aravalli alrededor de Narlai alberga una densidad excepcional de leopardos. Este safari vespertino con luz dorada y cálida es uno de los encuentros con la fauna más íntimos de Rajasthan.',
+    },
+    note: { en: '', es: '' },
     image: EXPERIENCE_IMAGES['leopard-safari'],
     tours: ['echoes-of-forts-and-forests', 'north-india-unveiled'],
   },
   {
-    category: 'Village',
-    title: 'Village Life at Ramathra Fort',
-    description: 'Leave the highways and enter rural Rajasthan. A boat ride at sunset on Kalisil lake. Local cuisine cooked in a traditional way at a farming family\'s home.',
-    note: 'One of the most memorable experiences on any journey with Om.',
+    category: { en: 'Village', es: 'Vida rural' },
+    title: { en: 'Village Life at Ramathra Fort', es: 'Vida aldeana en el Fuerte de Ramathra' },
+    description: {
+      en: 'Leave the highways and enter rural Rajasthan. A boat ride at sunset on Kalisil lake. Local cuisine cooked in a traditional way at a farming family\'s home.',
+      es: 'Abandona las carreteras y adéntrate en el Rajasthan rural. Un paseo en barca al atardecer en el lago Kalisil. Cocina local preparada a la manera tradicional en casa de una familia campesina.',
+    },
+    note: { en: 'One of the most memorable experiences on any journey with Om.', es: 'Una de las experiencias más memorables en cualquier viaje con Om.' },
     image: EXPERIENCE_IMAGES['village-ramathra'],
     tours: ['royal-forts-wilderness-heritage-trail', 'crowns-citadel-countryside'],
   },
   {
-    category: 'Spiritual',
-    title: 'Sunrise Boat Ride on the Ganges',
-    description: 'Rise at 5 AM for the most magical hour. Pilgrims at morning prayers, priests offering incense, the ghats bathed in soft golden light.',
-    note: '',
+    category: { en: 'Spiritual', es: 'Espiritual' },
+    title: { en: 'Sunrise Boat Ride on the Ganges', es: 'Paseo en barca al amanecer en el Ganges' },
+    description: {
+      en: 'Rise at 5 AM for the most magical hour. Pilgrims at morning prayers, priests offering incense, the ghats bathed in soft golden light.',
+      es: 'Despierta a las 5 de la mañana para vivir la hora más mágica. Peregrinos en oraciones matinales, sacerdotes ofreciendo incienso, los ghats bañados en suave luz dorada.',
+    },
+    note: { en: '', es: '' },
     image: EXPERIENCE_IMAGES['sunrise-ganges'],
     tours: ['temples-thrones-holy-ghats', 'north-india-unveiled'],
   },
   {
-    category: 'Heritage',
-    title: 'Heritage Food Walk in Jaipur',
-    description: 'Explore the walled city\'s hidden culinary treasures — pyaz kachori, samosa, pani puri and Indian chai. Climb Wind View Café for the perfect Hawa Mahal photograph.',
-    note: '',
+    category: { en: 'Heritage', es: 'Patrimonio' },
+    title: { en: 'Heritage Food Walk in Jaipur', es: 'Paseo gastronómico patrimonial en Jaipur' },
+    description: {
+      en: 'Explore the walled city\'s hidden culinary treasures — pyaz kachori, samosa, pani puri and Indian chai. Climb Wind View Café for the perfect Hawa Mahal photograph.',
+      es: 'Descubre los tesoros culinarios ocultos de la ciudad amurallada — pyaz kachori, samosa, pani puri y chai indio. Sube al Wind View Café para la fotografía perfecta del Hawa Mahal.',
+    },
+    note: { en: '', es: '' },
     image: EXPERIENCE_IMAGES['heritage-food'],
     tours: ['echoes-of-empires-delhi-agra', 'golden-triangle-wildlife-trail'],
   },
   {
-    category: 'Cultural',
-    title: 'Wagah Border Beating Retreat',
-    description: 'The spectacular daily ceremony at the India–Pakistan border. Infantrymen exchange fierce looks, shake hands, then simultaneously lower both flags.',
-    note: '',
+    category: { en: 'Cultural', es: 'Cultural' },
+    title: { en: 'Wagah Border Beating Retreat', es: 'Ceremonia del Retiro en la Frontera de Wagah' },
+    description: {
+      en: 'The spectacular daily ceremony at the India–Pakistan border. Infantrymen exchange fierce looks, shake hands, then simultaneously lower both flags.',
+      es: 'El espectacular ceremonial diario en la frontera India-Pakistán. Los soldados intercambian miradas intimidantes, se dan la mano y luego arrían ambas banderas al unísono.',
+    },
+    note: { en: '', es: '' },
     image: EXPERIENCE_IMAGES['wagah-border'],
     tours: ['north-india-unveiled'],
   },
   {
-    category: 'Village',
-    title: 'Rabari Community Walk, Narlai',
-    description: 'Walk with the Rabari pastoralists — semi-nomadic cattle herders who have shared the Aravalli terrain with leopards for centuries. A rare and intimate encounter.',
-    note: '',
+    category: { en: 'Village', es: 'Vida rural' },
+    title: { en: 'Rabari Community Walk, Narlai', es: 'Caminata con la comunidad Rabari, Narlai' },
+    description: {
+      en: 'Walk with the Rabari pastoralists — semi-nomadic cattle herders who have shared the Aravalli terrain with leopards for centuries. A rare and intimate encounter.',
+      es: 'Camina junto a los pastores Rabari — ganaderos seminómadas que comparten el terreno de los Aravalli con los leopardos desde hace siglos. Un encuentro raro e íntimo.',
+    },
+    note: { en: '', es: '' },
     image: EXPERIENCE_IMAGES['rabari-walk'],
     tours: ['echoes-of-forts-and-forests', 'north-india-unveiled'],
   },
   {
-    category: 'Wellness',
-    title: 'Ayurveda Healing Massage & Spa',
-    description: 'Rejuvenate mind, body and soul with a traditional Ayurveda healing session — available on arrival day or during any rest day throughout your journey.',
-    note: 'Available on request during any journey.',
+    category: { en: 'Wellness', es: 'Bienestar' },
+    title: { en: 'Ayurveda Healing Massage & Spa', es: 'Masaje y spa de sanación ayurvédica' },
+    description: {
+      en: 'Rejuvenate mind, body and soul with a traditional Ayurveda healing session — available on arrival day or during any rest day throughout your journey.',
+      es: 'Rejuvenece mente, cuerpo y alma con una sesión tradicional de sanación ayurvédica — disponible el día de llegada o en cualquier día de descanso durante tu viaje.',
+    },
+    note: { en: 'Available on request during any journey.', es: 'Disponible bajo petición durante cualquier viaje.' },
     image: EXPERIENCE_IMAGES['ayurveda'],
     tours: [],
   },
 ];
 
-/* ── categories in first-appearance order ──────────────────────── */
+/* ── categories in first-appearance order (English keys) ───────── */
 const CATEGORIES = Array.from(
-  new Map(experiences.map((e) => [e.category.trim(), e.category.trim()])).keys()
+  new Map(experiences.map((e) => [e.category.en, e.category.en])).keys()
 );
 
 /* ── category badge colours ────────────────────────────────────── */
@@ -151,7 +156,7 @@ function useIsMobile() {
 }
 
 /* ── View Tour button with tour numbers ────────────────────────── */
-function TourLinks({ slugs, mobile = false }) {
+function TourLinks({ slugs, mobile = false, lang = 'en' }) {
   if (!slugs?.length) return null;
   const btnBase = {
     display:         'inline-flex',
@@ -182,7 +187,7 @@ function TourLinks({ slugs, mobile = false }) {
         color:         'var(--color-text-muted)',
         marginBottom:  mobile ? '6px' : '8px',
       }}>
-        Available in
+        {lang === 'es' ? 'Disponible en' : 'Available in'}
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: mobile ? '6px' : '8px' }}>
         {slugs.map((slug) => {
@@ -205,7 +210,7 @@ function TourLinks({ slugs, mobile = false }) {
             >
               <span style={{ fontWeight: 600, opacity: 0.75 }}>T{num}</span>
               <span style={{ opacity: 0.45, fontSize: mobile ? '6px' : '7px' }}>·</span>
-              View
+              {lang === 'es' ? 'Ver' : 'View'}
               <ArrowRight size={mobile ? 6 : 7} />
             </Link>
           );
@@ -218,8 +223,11 @@ function TourLinks({ slugs, mobile = false }) {
 /* ────────────────────────────────────────────────────────────────
    ExperienceCard — props control mobile-vs-desktop sizing
    ────────────────────────────────────────────────────────────────*/
-function ExperienceCard({ exp, sizes = '33vw', mobile = false }) {
-  const cat = catStyle[exp.category] || { bg: 'var(--color-primary)', text: '#fff' };
+function ExperienceCard({ exp, sizes = '33vw', mobile = false, lang = 'en' }) {
+  const cat = catStyle[exp.category.en] || { bg: 'var(--color-primary)', text: '#fff' };
+  const title       = exp.title[lang]       ?? exp.title.en;
+  const description = exp.description[lang] ?? exp.description.en;
+  const note        = exp.note?.[lang]      ?? exp.note?.en ?? '';
 
   /* Mobile: compact image + tighter content */
   const imgH      = mobile ? '150px' : '220px';
@@ -275,7 +283,7 @@ function ExperienceCard({ exp, sizes = '33vw', mobile = false }) {
             borderRadius:    'var(--radius-control)',
           }}
         >
-          {exp.category}
+          {exp.category[lang] ?? exp.category.en}
         </span>
       </div>
 
@@ -285,17 +293,17 @@ function ExperienceCard({ exp, sizes = '33vw', mobile = false }) {
           className="font-serif font-light"
           style={{ color: 'var(--color-text)', fontSize: titleSize, lineHeight: 1.3, marginBottom: titleMB }}
         >
-          {exp.title}
+          {title}
         </h3>
 
         <p
           className="font-sans font-light leading-relaxed flex-1"
           style={{ color: 'var(--color-text-muted)', fontSize: bodySize, marginBottom: bodyMB }}
         >
-          {exp.description}
+          {description}
         </p>
 
-        {exp.note && (
+        {note && (
           <p
             className="font-sans italic pl-2"
             style={{
@@ -305,7 +313,7 @@ function ExperienceCard({ exp, sizes = '33vw', mobile = false }) {
               marginBottom: bodyMB,
             }}
           >
-            {exp.note}
+            {note}
           </p>
         )}
 
@@ -323,7 +331,7 @@ function ExperienceCard({ exp, sizes = '33vw', mobile = false }) {
    • No JS touch handlers → vertical page scroll unblocked
    • No arrow buttons
    ────────────────────────────────────────────────────────────────*/
-function MobileCategorySlider({ category, cards }) {
+function MobileCategorySlider({ category, cards, lang = 'en' }) {
   const scrollRef = useRef(null);
   const [activeIdx, setActiveIdx] = useState(0);
   const count = cards.length;
@@ -388,7 +396,7 @@ function MobileCategorySlider({ category, cards }) {
               minWidth:        0,
             }}
           >
-            <ExperienceCard exp={exp} sizes="90vw" mobile />
+            <ExperienceCard exp={exp} sizes="90vw" mobile lang={lang} />
           </div>
         ))}
       </div>
@@ -397,7 +405,7 @@ function MobileCategorySlider({ category, cards }) {
       <div
         className="flex items-center justify-center gap-2 mt-4"
         role="tablist"
-        aria-label={`${category} experience slides`}
+        aria-label={lang === 'es' ? `Diapositivas de ${category}` : `${category} experience slides`}
       >
         {cards.map((_, i) => {
           const isActive = i === activeIdx;
@@ -431,14 +439,18 @@ function MobileCategorySlider({ category, cards }) {
 }
 
 /* ── Desktop category filter pills ────────────────────────────── */
-function CategoryFilter({ active, onChange, counts }) {
-  const all = 'All Experiences';
-  const pills = [all, ...CATEGORIES];
+function CategoryFilter({ active, onChange, counts, lang = 'en' }) {
+  const allLabel = lang === 'es' ? 'Todas las experiencias' : 'All Experiences';
+  const pills = [allLabel, ...CATEGORIES];
   return (
-    <div className="flex flex-wrap gap-2 mb-10" role="group" aria-label="Filter by category">
+    <div className="flex flex-wrap gap-2 mb-10" role="group" aria-label={lang === 'es' ? 'Filtrar por categoría' : 'Filter by category'}>
       {pills.map((cat) => {
         const isActive = active === cat;
-        const count    = cat === all ? experiences.length : (counts[cat] ?? 0);
+        const isAll = cat === allLabel;
+        const count = isAll ? experiences.length : (counts[cat] ?? 0);
+        // For non-all, find the localized label
+        const exp0 = experiences.find(e => e.category.en === cat);
+        const displayLabel = isAll ? allLabel : (exp0 ? (exp0.category[lang] ?? cat) : cat);
         return (
           <button
             key={cat}
@@ -452,7 +464,7 @@ function CategoryFilter({ active, onChange, counts }) {
               borderRadius:    'var(--radius-control)',
             }}
           >
-            {cat}
+            {displayLabel}
             <span style={{ fontSize: '9px', opacity: 0.7, fontVariantNumeric: 'tabular-nums' }}>
               ({count})
             </span>
@@ -466,20 +478,27 @@ function CategoryFilter({ active, onChange, counts }) {
 /* ── Main ──────────────────────────────────────────────────────── */
 export default function ExperiencesList() {
   const isMobile = useIsMobile();
-  const [activeFilter, setActiveFilter] = useState('All Experiences');
+  const { lang } = useLang();
+  const allLabel = lang === 'es' ? 'Todas las experiencias' : 'All Experiences';
+  const [activeFilter, setActiveFilter] = useState(allLabel);
+
+  // Keep filter in sync with lang changes
+  useEffect(() => {
+    setActiveFilter(lang === 'es' ? 'Todas las experiencias' : 'All Experiences');
+  }, [lang]);
 
   const counts = CATEGORIES.reduce((acc, cat) => {
-    acc[cat] = experiences.filter((e) => e.category.trim() === cat).length;
+    acc[cat] = experiences.filter((e) => e.category.en === cat).length;
     return acc;
   }, {});
 
-  const desktopCards = activeFilter === 'All Experiences'
+  const desktopCards = activeFilter === allLabel
     ? experiences
-    : experiences.filter((e) => e.category.trim() === activeFilter);
+    : experiences.filter((e) => e.category.en === activeFilter);
 
   const mobileGroups = CATEGORIES.map((cat) => ({
     category: cat,
-    cards:    experiences.filter((e) => e.category.trim() === cat),
+    cards:    experiences.filter((e) => e.category.en === cat),
   })).filter((g) => g.cards.length > 0);
 
   return (
@@ -489,10 +508,10 @@ export default function ExperiencesList() {
         {/* ── DESKTOP / TABLET ────────────────────────────────── */}
         {!isMobile && (
           <>
-            <CategoryFilter active={activeFilter} onChange={setActiveFilter} counts={counts} />
+            <CategoryFilter active={activeFilter} onChange={setActiveFilter} counts={counts} lang={lang} />
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {desktopCards.map((exp, i) => (
-                <ExperienceCard key={`${exp.title}-${i}`} exp={exp} sizes="33vw" />
+                <ExperienceCard key={`${exp.title.en}-${i}`} exp={exp} sizes="33vw" lang={lang} />
               ))}
             </div>
           </>
@@ -501,29 +520,40 @@ export default function ExperiencesList() {
         {/* ── MOBILE — grouped category sliders ────────────────── */}
         {isMobile && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-            {mobileGroups.map(({ category, cards }) => (
-              <div key={category}>
-                <div className="flex items-center gap-3 mb-4">
-                  <h2 className="font-serif text-xl font-light" style={{ color: 'var(--color-text)' }}>
-                    {category}
-                  </h2>
-                  <span className="font-sans text-[10px] tracking-wider" style={{ color: 'var(--color-text-muted)' }}>
-                    {cards.length} {cards.length === 1 ? 'experience' : 'experiences'}
-                  </span>
-                  <div className="flex-1 h-px" style={{ backgroundColor: 'var(--color-border)' }} />
+            {mobileGroups.map(({ category, cards }) => {
+              const exp0 = experiences.find(e => e.category.en === category);
+              const displayCat = exp0 ? (exp0.category[lang] ?? category) : category;
+              const expWord = lang === 'es'
+                ? (cards.length === 1 ? 'experiencia' : 'experiencias')
+                : (cards.length === 1 ? 'experience' : 'experiences');
+              return (
+                <div key={category}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <h2 className="font-serif text-xl font-light" style={{ color: 'var(--color-text)' }}>
+                      {displayCat}
+                    </h2>
+                    <span className="font-sans text-[10px] tracking-wider" style={{ color: 'var(--color-text-muted)' }}>
+                      {cards.length} {expWord}
+                    </span>
+                    <div className="flex-1 h-px" style={{ backgroundColor: 'var(--color-border)' }} />
+                  </div>
+                  <MobileCategorySlider category={category} cards={cards} lang={lang} />
                 </div>
-                <MobileCategorySlider category={category} cards={cards} />
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
         {/* Footer CTA */}
         <div className="mt-16 text-center">
           <p className="font-serif text-lg italic mb-5" style={{ color: 'var(--color-text-muted)' }}>
-            &ldquo;The experiences you choose are as important as the destinations you visit.&rdquo;
+            {lang === 'es'
+              ? '\u00abLas experiencias que eliges son tan importantes como los destinos que visitas.\u00bb'
+              : '\u201cThe experiences you choose are as important as the destinations you visit.\u201d'}
           </p>
-          <Link href="/contact" className="btn-primary inline-flex">Plan My Experience</Link>
+          <Link href="/contact" className="btn-primary inline-flex">
+            {lang === 'es' ? 'Planear mi experiencia' : 'Plan My Experience'}
+          </Link>
         </div>
       </div>
     </section>

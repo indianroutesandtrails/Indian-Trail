@@ -19,7 +19,7 @@ function formatDate(isoStr) {
 }
 
 export default function FestivalDetailClient({ festival }) {
-  const { lang } = useLang();
+  const { lang, localized } = useLang();
   const today = new Date();
   const next = getNextOccurrence(festival, today);
   const countdown = daysUntil(festival, today);
@@ -176,7 +176,7 @@ export default function FestivalDetailClient({ festival }) {
                         </div>
                         <h3 className="font-serif text-lg font-light mb-1"
                           style={{ color: 'var(--color-text)' }}>
-                          {tour.title}
+                          {localized(tour.title)}
                         </h3>
                         <p className="font-sans text-sm mb-3" style={{ color: 'var(--color-text-muted)' }}>
                           {hook[lang]}

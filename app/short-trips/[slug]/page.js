@@ -13,12 +13,16 @@ export async function generateMetadata({ params }) {
   const trip = getShortTripBySlug(slug);
   if (!trip) return { title: 'Short Trip Not Found' };
   const variant = trip.variants[0];
+  // Canonical English defaults for SEO only — runtime props stay untouched bilingual objects
+  const titleEn = typeof trip.title === 'object' ? (trip.title.en ?? '') : trip.title;
+  const summaryEn = typeof trip.summary === 'object' ? (trip.summary.en ?? '') : trip.summary;
+  const durationEn = typeof variant.duration === 'object' ? (variant.duration.en ?? '') : variant.duration;
   return {
-    title: `${trip.title} — ${variant.duration} from ${variant.origin}`,
-    description: trip.summary,
+    title: `${titleEn} — ${durationEn} from ${variant.origin}`,
+    description: summaryEn,
     openGraph: {
-      title: trip.title,
-      description: trip.summary,
+      title: titleEn,
+      description: summaryEn,
       images: [{ url: trip.image, width: 1200, height: 800 }],
     },
   };
@@ -29,5 +33,6 @@ export default async function ShortTripPage({ params, searchParams }) {
   const sp = await searchParams;
   const trip = getShortTripBySlug(slug);
   if (!trip) notFound();
+  // Pass the complete untouched bilingual object — no flattening
   return <ShortTripDetail trip={trip} initialVariant={sp?.variant ?? null} />;
 }

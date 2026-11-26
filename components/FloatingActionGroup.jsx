@@ -13,6 +13,7 @@
  * Mobile (<1024px):
  *   Bottom-right stack (bottom → top):
  *     WhatsApp → CalendarDays → Video
+ *   Bottom-left: compact EN | ES language pill
  *
  * Z-index stack:
  *   WhatsApp / ticker: 50
@@ -333,16 +334,16 @@ export default function FloatingActionGroup() {
         onMouseEnter={() => setLangHover(true)}
         onMouseLeave={() => setLangHover(false)}
       >
-        <div
-          role="group"
-          aria-label="Language selection"
-          style={{
-            display: 'flex', alignItems: 'stretch',
-            borderRadius: '0 12px 12px 0',
-            transform:  langHover ? 'translateX(0px)' : 'translateX(-2px)',
-            transition: 'transform 220ms ease',
-          }}
-        >
+        {/* lang-tab-nudge handles X animation only — translateY never on this element */}
+        <div className={`lang-tab-nudge${langHover ? ' lang-tab-nudge--paused' : ''}`}>
+          <div
+            role="group"
+            aria-label="Language selection"
+            style={{
+              display: 'flex', alignItems: 'stretch',
+              borderRadius: '0 12px 12px 0',
+            }}
+          >
           {/* Icon cell */}
           <span
             aria-hidden="true"
@@ -423,6 +424,7 @@ export default function FloatingActionGroup() {
             ))}
           </span>
         </div>
+        </div>
       </div>
 
       {/* ══════════════════════════════════════════════════════
@@ -494,6 +496,81 @@ export default function FloatingActionGroup() {
         >
           <Video size={20} strokeWidth={1.7} aria-hidden="true" style={{ color: '#FBF7EF', display: 'block' }} />
         </button>
+      </div>
+
+      {/* ══════════════════════════════════════════════════════
+          MOBILE LANGUAGE TAB — bottom-left, compact, <1024px only
+          Separate from right-side controls. No page x-scroll.
+          ══════════════════════════════════════════════════════ */}
+      <div
+        className="lg:hidden"
+        style={{
+          position:      'fixed',
+          left:          '16px',
+          bottom:        'calc(24px + env(safe-area-inset-bottom, 0px))',
+          zIndex:        55,
+        }}
+      >
+        <div
+          role="group"
+          aria-label="Language selection"
+          style={{
+            display:              'flex',
+            alignItems:           'center',
+            gap:                  '0',
+            height:               '40px',
+            borderRadius:         '999px',
+            backgroundColor:      BG_REST,
+            backdropFilter:       'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            border:               '1px solid rgba(240,220,168,0.22)',
+            boxShadow:            SHADOW_MOBILE,
+            padding:              '0 10px',
+            overflow:             'hidden',
+          }}
+        >
+          {['en', 'es'].map((l, i) => (
+            <span key={l} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {i > 0 && (
+                <span
+                  aria-hidden="true"
+                  style={{ fontSize: '11px', color: 'rgba(240,220,168,0.30)', lineHeight: 1, userSelect: 'none' }}
+                >
+                  |
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => setLang(l)}
+                aria-pressed={lang === l}
+                aria-label={l === 'en' ? 'Switch to English' : 'Cambiar a Español'}
+                style={{
+                  fontFamily:    'var(--font-body, system-ui)',
+                  fontSize:      '10px',
+                  fontWeight:    lang === l ? 700 : 400,
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  color:         lang === l ? 'var(--color-secondary)' : 'rgba(251,247,239,0.55)',
+                  whiteSpace:    'nowrap',
+                  lineHeight:    1,
+                  background:    'none',
+                  border:        'none',
+                  cursor:        'pointer',
+                  padding:       '8px 4px',
+                  minWidth:      '44px',
+                  minHeight:     '44px',
+                  display:       'flex',
+                  alignItems:    'center',
+                  justifyContent:'center',
+                  transition:    'color 160ms ease',
+                  appearance:    'none',
+                }}
+              >
+                {l.toUpperCase()}
+              </button>
+            </span>
+          ))}
+        </div>
       </div>
 
       {/* ══════════════════════════════════════════════════════

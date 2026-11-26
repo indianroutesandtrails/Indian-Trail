@@ -18,7 +18,7 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { lang, setLang, t } = useLang();
+  const { lang, t } = useLang();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -132,7 +132,7 @@ export default function Navbar() {
                 ? 'rgba(255,255,255,0.85)' : 'var(--color-primary)';
             }}
           >
-            Enquire
+            {t('nav.contact')}
           </Link>
         </div>
 
@@ -186,33 +186,7 @@ export default function Navbar() {
             {t('nav.contact')}
           </Link>
 
-          <div className="flex items-center justify-between pt-4 mt-1">
-            {/* Language switcher — mobile */}
-            <div className="flex items-center gap-2" role="group" aria-label="Language selection">
-              {['en', 'es'].map((l, i) => (
-                <span key={l} className="flex items-center gap-2">
-                  {i > 0 && (
-                    <span className="text-xs text-gray-300 select-none" aria-hidden="true">|</span>
-                  )}
-                  <button
-                    onClick={() => { setLang(l); setOpen(false); }}
-                    aria-pressed={lang === l}
-                    className="font-sans text-xs tracking-[0.15em] uppercase transition-colors duration-200"
-                    style={{
-                      color:      lang === l ? 'var(--color-primary)' : 'var(--color-text-muted)',
-                      fontWeight: lang === l ? 600 : 400,
-                      background: 'none',
-                      border:     'none',
-                      cursor:     'pointer',
-                      padding:    '2px 0',
-                    }}
-                  >
-                    {l.toUpperCase()}
-                  </button>
-                </span>
-              ))}
-            </div>
-
+          <div className="flex items-center justify-end pt-4 mt-1">
             <Link
               href="/contact"
               className="font-sans text-xs tracking-[0.18em] uppercase px-5 py-2.5"
@@ -222,7 +196,7 @@ export default function Navbar() {
                 borderRadius: 'var(--radius-control)',
               }}
             >
-              Enquire
+              {t('nav.contact')}
             </Link>
           </div>
         </div>

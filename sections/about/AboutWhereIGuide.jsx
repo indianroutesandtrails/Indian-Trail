@@ -4,7 +4,7 @@ import { MapPin } from 'lucide-react';
 import { useLang } from '@/lib/LanguageContext';
 
 export default function AboutWhereIGuide() {
-  const { t } = useLang();
+  const { t, localized } = useLang();
   return (
     <section
       style={{
@@ -73,7 +73,7 @@ export default function AboutWhereIGuide() {
                       className="font-sans font-light"
                       style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', marginLeft: '10px' }}
                     >
-                      — {item.desc}
+                      — {localized(item.desc)}
                     </span>
                   </div>
                 </li>

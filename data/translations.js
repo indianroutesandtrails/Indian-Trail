@@ -201,6 +201,273 @@ export const translations = {
       tagline: 'Exclusive Journeys by Om',
       quote:   'You are not a tourist holding a map — you are an honoured guest.',
     },
+
+    // Tours listing page
+    tours_page: {
+      eyebrow:       'Signature Journeys',
+      hero_heading1: 'Sixteen Extraordinary',
+      hero_heading2: 'Expeditions',
+      hero_subtitle: 'Each journey personally designed by Om — balancing ultra-luxury with raw, unfiltered India.',
+      heading:       'Sixteen Handcrafted Expeditions',
+      subheading:    'Every journey is personally designed by Om — no two are alike.',
+      filter_all: 'All Journeys',
+      filter_heritage: 'Heritage',
+      filter_wildlife:  'Wildlife',
+      filter_spiritual: 'Spiritual',
+      filter_culinary:  'Culinary',
+      filter_photography: 'Photography',
+      nights: 'Nights',
+      days:   'Days',
+      view_journey: 'View Journey',
+      no_results: 'No journeys match your filter. Try another category.',
+      best_months: 'Best Months',
+    },
+
+    // Tour detail page
+    tour_detail: {
+      overview:        'Journey Overview',
+      overview_heading: 'Overview',
+      about_journey:   'About This Journey',
+      itinerary:       'Day-by-Day Itinerary',
+      detailed_itinerary: 'Detailed Itinerary',
+      highlights:      'Journey Highlights',
+      highlights_heading: 'Highlights',
+      optional_exp:    'Optional Experiences',
+      optional_heading: 'Add-Ons',
+      enroute:         'En-Route Options',
+      enroute_heading: 'Flexibility',
+      day_label:       'Day',
+      day_by_day:      'Day by Day',
+      enquire_journey: 'Enquire About This Journey',
+      related:         'Related Journeys',
+      nights:          'Nights',
+      best_season:     'Best Season',
+      route_label:     'Route',
+      flexibility:     'Flexibility',
+      planning:        'Planning Notes',
+      planning_heading: 'Important Planning Notes',
+      glance:          'Journey at a Glance',
+      duration:        'Duration',
+      destinations:    'Destinations',
+      pricing:         'Pricing',
+      cities:          'Cities',
+      festival_timing: 'Festival Timing',
+      time_your_journey: 'Time Your Journey',
+      next_occurrence: 'Next',
+      days_away:       'days away',
+      perfect_match:   'perfect match',
+      good_match:      'good match',
+      ready_to_experience: 'Ready to Experience',
+      plan_my_journey: 'Plan My Journey',
+      all_journeys:    'All Journeys',
+      plan_this_journey: 'Plan This Journey',
+      optional_stop:   'Optional Stop',
+      responsible_tourism: 'Responsible Tourism',
+      responsible_note: 'Taking into consideration the well-being of animals, we as a responsible tour operator do not encourage the ride nor any activities related with the animals.',
+      share_your_vision: 'Share your vision and Om will craft your India experience.',
+    },
+
+    // Destinations listing page
+    destinations_page: {
+      eyebrow:   'India Through Our Eyes',
+      heading1:  'Cities That',
+      heading2:  'Stay With You',
+      subtitle:  'From Mughal monuments and desert dunes to sacred ghats and lake palaces — India distilled to its most magnificent destinations.',
+      all_link:  'All Destinations',
+      explore:   'Explore',
+    },
+
+    // Destination detail page
+    destination_detail: {
+      overview:    'About',
+      highlights:  'Highlights',
+      best_time:   'Best Time to Visit',
+      journeys:    'Related Journeys',
+      enquire:     'Enquire About This Destination',
+    },
+
+    // Festivals listing page
+    festivals_page: {
+      eyebrow:   'Festivals of India',
+      heading1:  'Celebrate the',
+      heading2:  'Soul of India',
+      subtitle:  'India\'s festivals are living culture — Om personally guides you through the most extraordinary celebrations of the year.',
+      filter_all: 'All Regions',
+      filter_north: 'North India',
+      filter_south: 'South India',
+      filter_west:  'West India',
+      filter_east:  'East India',
+      all_months:   'All Months',
+      upcoming:     'Upcoming',
+      days_away:    'days away',
+      today:        'Today',
+      this_week:    'This week',
+      learn_more:   'Learn More',
+      no_results:   'No festivals match your filter.',
+    },
+
+    // Festival detail page
+    festival_detail: {
+      overview:    'About This Festival',
+      when:        'When',
+      where:       'Where',
+      duration:    'Duration',
+      significance:'Significance',
+      experience:  'The Experience',
+      journeys:    'Suggested Journeys',
+      enquire:     'Enquire About This Festival',
+    },
+
+    // Experiences listing page
+    experiences_page: {
+      eyebrow:   'Curated Experiences',
+      heading1:  'Beyond',
+      heading2:  'Sightseeing',
+      subtitle:  'From spice markets to tiger safaris — Om opens doors that remain closed to ordinary travellers.',
+      all:       'All Experiences',
+      enquire:   'Enquire About This Experience',
+    },
+
+    // Short Trips listing page
+    short_trips_page: {
+      eyebrow:   'Short Excursions',
+      heading1:  'Day Trips &',
+      heading2:  'Short Escapes',
+      subtitle:  'A single day, perfectly spent. Curated excursions from India\'s great cities.',
+      filter_all: 'All Trips',
+      from_city:  'From',
+      duration:   'Duration',
+      group_size: 'Group Size',
+      difficulty: 'Difficulty',
+      private:    'Private',
+      semi_private:'Semi-Private',
+      easy:       'Easy',
+      moderate:   'Moderate',
+      view_trip:  'View Trip',
+      includes:   'Includes',
+      excludes:   'Excludes',
+      notes:      'Planning Notes',
+      variants:   'Options',
+      pickup:     'Pick-up',
+      dropoff:    'Drop-off',
+      what_to_bring: 'What to Bring',
+      best_months: 'Best Months',
+      enquire:    'Enquire About This Trip',
+    },
+
+    // Contact page
+    contact_page: {
+      eyebrow:   'Begin Your Journey',
+      heading:   'Get in Touch',
+      subtitle:  'Reach out to Om directly. Every enquiry is personally answered.',
+      or:        'or',
+      details_heading: 'Direct Contact',
+    },
+
+    // Privacy page
+    privacy_page: {
+      heading: 'Privacy Policy',
+      last_updated: 'Last Updated',
+    },
+
+    // Terms page
+    terms_page: {
+      heading: 'Terms & Conditions',
+      last_updated: 'Last Updated',
+    },
+
+    // Thank You page
+    thank_you: {
+      heading:   'Thank You!',
+      subheading: 'Your enquiry has been received.',
+      body:      'Om will personally reply to you within 24 hours. In the meantime, feel free to explore our journeys.',
+      cta:       'Explore Journeys',
+    },
+
+    // 404 page
+    not_found: {
+      heading:  'Page Not Found',
+      body:     'The page you are looking for does not exist or has been moved.',
+      cta:      'Go to Homepage',
+    },
+
+    // Availability Drawer
+    availability: {
+      heading:     'Check Availability',
+      subheading:  'Select a date to view availability.',
+      booked:      'Booked',
+      available:   'Available',
+      selected:    'Selected',
+      loading:     'Loading availability...',
+      error:       'Could not load availability. Please try again.',
+      not_configured: 'Availability calendar not configured.',
+      enquire_date:'Enquire for This Date',
+      legend:      'Legend',
+      close:       'Close',
+    },
+
+    // Testimonials section
+    testimonials: {
+      eyebrow:  'Guest Stories',
+      heading1: 'Journeys',
+      heading2: 'Remembered',
+      subline:  'A few words from travellers who experienced India with us.',
+      prev:     'Previous testimonial',
+      next:     'Next testimonial',
+      position: 'Testimonial position',
+    },
+
+    // Language switcher
+    language: {
+      label:      'Language',
+      switch_en:  'Switch to English',
+      switch_es:  'Cambiar a Español',
+      current_en: 'Currently English',
+      current_es: 'Actualmente Español',
+    },
+
+    // Responsible Tourism section
+    responsible_items: {
+      community_title: 'Community First',
+      community_body:  'We prioritise locally owned guesthouses, restaurants and artisans — ensuring your spend directly benefits the communities you visit.',
+      wildlife_title:  'Wildlife Ethics',
+      wildlife_body:   'No elephant rides. No exploitative wildlife encounters. We work only with sanctuaries and operators committed to animal welfare.',
+      carbon_title:    'Low-Carbon Choices',
+      carbon_body:     'Shorter internal flights, train journeys and electric vehicles where available. We offset what we cannot yet eliminate.',
+      heritage_title:  'Heritage Stewardship',
+      heritage_body:   'We guide with respect — no touching carvings, no flash photography in sacred spaces, and briefing every traveller before they enter.',
+    },
+
+    // Why choose us
+    why_items: {
+      eyebrow: 'The Art of Slow Travel',
+    },
+
+    // Home Destinations section
+    home_destinations: {
+      eyebrow:  'India Through Our Eyes',
+      heading1: 'Cities That',
+      heading2: 'Stay With You',
+      all_link: 'All Destinations',
+    },
+
+    // Home Tours section
+    home_tours: {
+      eyebrow:  'Signature Journeys',
+      heading1: 'Seven Extraordinary',
+      heading2: 'Expeditions',
+      all_link: 'View All Journeys',
+      footer_quote: '"Each journey is personally designed — a hand-woven masterpiece by Om."',
+      cta:      'Design My Journey',
+    },
+
+    // Home Festivals strip
+    home_festivals: {
+      eyebrow:  'Festival Calendar',
+      heading1: 'Celebrate India\'s',
+      heading2: 'Living Culture',
+      all_link: 'View Full Calendar',
+    },
   },
 
   es: {
@@ -397,6 +664,273 @@ export const translations = {
     brand: {
       tagline: 'Viajes Exclusivos por Om',
       quote:   'No eres un turista con un mapa — eres un invitado de honor.',
+    },
+
+    // Tours listing page
+    tours_page: {
+      eyebrow:       'Viajes Exclusivos',
+      hero_heading1: 'Dieciséis Expediciones',
+      hero_heading2: 'Extraordinarias',
+      hero_subtitle: 'Cada viaje diseñado personalmente por Om — combinando el lujo con la India más auténtica.',
+      heading:       'Dieciséis Expediciones Artesanales',
+      subheading:    'Cada viaje es diseñado personalmente por Om — ninguno es igual.',
+      filter_all: 'Todos los Viajes',
+      filter_heritage: 'Patrimonio',
+      filter_wildlife:  'Naturaleza',
+      filter_spiritual: 'Espiritual',
+      filter_culinary:  'Gastronomía',
+      filter_photography: 'Fotografía',
+      nights: 'Noches',
+      days:   'Días',
+      view_journey: 'Ver Viaje',
+      no_results: 'Ningún viaje coincide con tu filtro. Prueba otra categoría.',
+      best_months: 'Mejores Meses',
+    },
+
+    // Tour detail page
+    tour_detail: {
+      overview:        'Resumen del Viaje',
+      overview_heading: 'Resumen',
+      about_journey:   'Sobre este viaje',
+      itinerary:       'Itinerario Día a Día',
+      detailed_itinerary: 'Itinerario detallado',
+      highlights:      'Aspectos destacados del viaje',
+      highlights_heading: 'Aspectos destacados',
+      optional_exp:    'Experiencias Opcionales',
+      optional_heading: 'Complementos',
+      enroute:         'Opciones en ruta',
+      enroute_heading: 'Flexibilidad',
+      day_label:       'Día',
+      day_by_day:      'Día a día',
+      enquire_journey: 'Consultar Sobre Este Viaje',
+      related:         'Viajes Relacionados',
+      nights:          'Noches',
+      best_season:     'Mejor Temporada',
+      route_label:     'Ruta',
+      flexibility:     'Flexibilidad',
+      planning:        'Notas de Planificación',
+      planning_heading: 'Notas de Planificación Importantes',
+      glance:          'El viaje de un vistazo',
+      duration:        'Duración',
+      destinations:    'Destinos',
+      pricing:         'Precio',
+      cities:          'Ciudades',
+      festival_timing: 'Calendario de festivales',
+      time_your_journey: 'Encuentra el momento ideal',
+      next_occurrence: 'Próxima fecha',
+      days_away:       'días restantes',
+      perfect_match:   'coincidencia perfecta',
+      good_match:      'buena coincidencia',
+      ready_to_experience: '¿Listo para descubrir',
+      plan_my_journey: 'Planear Mi Viaje',
+      all_journeys:    'Todos los Viajes',
+      plan_this_journey: 'Planear Este Viaje',
+      optional_stop:   'Parada Opcional',
+      responsible_tourism: 'Turismo Responsable',
+      responsible_note: 'Teniendo en cuenta el bienestar de los animales, como operador de turismo responsable no fomentamos los paseos ni ninguna actividad relacionada con animales.',
+      share_your_vision: 'Comparte tu visión y Om diseñará tu experiencia en India.',
+    },
+
+    // Destinations listing page
+    destinations_page: {
+      eyebrow:   'India a Nuestros Ojos',
+      heading1:  'Ciudades que',
+      heading2:  'Perduran en Ti',
+      subtitle:  'De monumentos mogoles y dunas del desierto a los ghats sagrados y palacios flotantes — India destilada en sus destinos más magníficos.',
+      all_link:  'Todos los Destinos',
+      explore:   'Explorar',
+    },
+
+    // Destination detail page
+    destination_detail: {
+      overview:    'Acerca de',
+      highlights:  'Destacados',
+      best_time:   'Mejor Época para Visitar',
+      journeys:    'Viajes Relacionados',
+      enquire:     'Consultar Sobre Este Destino',
+    },
+
+    // Festivals listing page
+    festivals_page: {
+      eyebrow:   'Festivales de India',
+      heading1:  'Celebra el',
+      heading2:  'Alma de India',
+      subtitle:  'Los festivales de India son cultura viva — Om te guía personalmente por las celebraciones más extraordinarias del año.',
+      filter_all: 'Todas las Regiones',
+      filter_north: 'India del Norte',
+      filter_south: 'India del Sur',
+      filter_west:  'India Occidental',
+      filter_east:  'India Oriental',
+      all_months:   'Todos los Meses',
+      upcoming:     'Próximamente',
+      days_away:    'días restantes',
+      today:        'Hoy',
+      this_week:    'Esta semana',
+      learn_more:   'Saber Más',
+      no_results:   'Ningún festival coincide con tu filtro.',
+    },
+
+    // Festival detail page
+    festival_detail: {
+      overview:    'Sobre Este Festival',
+      when:        'Cuándo',
+      where:       'Dónde',
+      duration:    'Duración',
+      significance:'Significado',
+      experience:  'La Experiencia',
+      journeys:    'Viajes Sugeridos',
+      enquire:     'Consultar Sobre Este Festival',
+    },
+
+    // Experiences listing page
+    experiences_page: {
+      eyebrow:   'Experiencias Curadas',
+      heading1:  'Más Allá de',
+      heading2:  'las Visitas Turísticas',
+      subtitle:  'Desde mercados de especias hasta safaris — Om abre puertas que permanecen cerradas para los viajeros ordinarios.',
+      all:       'Todas las Experiencias',
+      enquire:   'Consultar Sobre Esta Experiencia',
+    },
+
+    // Short Trips listing page
+    short_trips_page: {
+      eyebrow:   'Excursiones Cortas',
+      heading1:  'Excursiones y',
+      heading2:  'Escapadas Breves',
+      subtitle:  'Un solo día, perfectamente aprovechado. Excursiones curadas desde las grandes ciudades de India.',
+      filter_all: 'Todos los Viajes',
+      from_city:  'Desde',
+      duration:   'Duración',
+      group_size: 'Tamaño del Grupo',
+      difficulty: 'Dificultad',
+      private:    'Privado',
+      semi_private:'Semi-Privado',
+      easy:       'Fácil',
+      moderate:   'Moderado',
+      view_trip:  'Ver Excursión',
+      includes:   'Incluye',
+      excludes:   'No Incluye',
+      notes:      'Notas de Planificación',
+      variants:   'Opciones',
+      pickup:     'Recogida',
+      dropoff:    'Regreso',
+      what_to_bring: 'Qué Llevar',
+      best_months: 'Mejores Meses',
+      enquire:    'Consultar Sobre Esta Excursión',
+    },
+
+    // Contact page
+    contact_page: {
+      eyebrow:   'Comienza Tu Viaje',
+      heading:   'Contáctanos',
+      subtitle:  'Contacta a Om directamente. Cada consulta es respondida personalmente.',
+      or:        'o',
+      details_heading: 'Contacto Directo',
+    },
+
+    // Privacy page
+    privacy_page: {
+      heading: 'Política de Privacidad',
+      last_updated: 'Última Actualización',
+    },
+
+    // Terms page
+    terms_page: {
+      heading: 'Términos y Condiciones',
+      last_updated: 'Última Actualización',
+    },
+
+    // Thank You page
+    thank_you: {
+      heading:    '¡Gracias!',
+      subheading: 'Tu consulta ha sido recibida.',
+      body:       'Om te responderá personalmente en menos de 24 horas. Mientras tanto, te invitamos a explorar nuestros viajes.',
+      cta:        'Explorar Viajes',
+    },
+
+    // 404 page
+    not_found: {
+      heading:  'Página No Encontrada',
+      body:     'La página que buscas no existe o ha sido movida.',
+      cta:      'Ir al Inicio',
+    },
+
+    // Availability Drawer
+    availability: {
+      heading:     'Consultar Disponibilidad',
+      subheading:  'Selecciona una fecha para ver la disponibilidad.',
+      booked:      'Reservado',
+      available:   'Disponible',
+      selected:    'Seleccionado',
+      loading:     'Cargando disponibilidad...',
+      error:       'No se pudo cargar la disponibilidad. Por favor intenta nuevamente.',
+      not_configured: 'Calendario de disponibilidad no configurado.',
+      enquire_date:'Consultar para Esta Fecha',
+      legend:      'Leyenda',
+      close:       'Cerrar',
+    },
+
+    // Testimonials section
+    testimonials: {
+      eyebrow:  'Historias de Huéspedes',
+      heading1: 'Viajes',
+      heading2: 'Recordados',
+      subline:  'Algunas palabras de viajeros que descubrieron India con nosotros.',
+      prev:     'Testimonio anterior',
+      next:     'Siguiente testimonio',
+      position: 'Posición del testimonio',
+    },
+
+    // Language switcher
+    language: {
+      label:      'Idioma',
+      switch_en:  'Switch to English',
+      switch_es:  'Cambiar a Español',
+      current_en: 'Currently English',
+      current_es: 'Actualmente Español',
+    },
+
+    // Responsible Tourism section
+    responsible_items: {
+      community_title: 'La Comunidad Primero',
+      community_body:  'Priorizamos alojamientos, restaurantes y artesanos locales — asegurando que tu gasto beneficie directamente a las comunidades que visitas.',
+      wildlife_title:  'Ética con la Fauna',
+      wildlife_body:   'Sin paseos en elefante. Sin encuentros explotadores con animales. Trabajamos solo con santuarios y operadores comprometidos con el bienestar animal.',
+      carbon_title:    'Opciones de Bajo Impacto',
+      carbon_body:     'Vuelos internos más cortos, viajes en tren y vehículos eléctricos cuando están disponibles. Compensamos lo que aún no podemos eliminar.',
+      heritage_title:  'Custodia del Patrimonio',
+      heritage_body:   'Guiamos con respeto — sin tocar tallas, sin flash en espacios sagrados, e informando a cada viajero antes de entrar.',
+    },
+
+    // Why choose us
+    why_items: {
+      eyebrow: 'El Arte del Viaje Lento',
+    },
+
+    // Home Destinations section
+    home_destinations: {
+      eyebrow:  'India a Nuestros Ojos',
+      heading1: 'Ciudades que',
+      heading2: 'Perduran en Ti',
+      all_link: 'Todos los Destinos',
+    },
+
+    // Home Tours section
+    home_tours: {
+      eyebrow:  'Viajes Exclusivos',
+      heading1: 'Siete Expediciones',
+      heading2: 'Extraordinarias',
+      all_link: 'Ver Todos los Viajes',
+      footer_quote: '"Cada viaje es diseñado personalmente — una obra maestra tejida a mano por Om."',
+      cta:      'Diseña Mi Viaje',
+    },
+
+    // Home Festivals strip
+    home_festivals: {
+      eyebrow:  'Calendario de Festivales',
+      heading1: 'Celebra la',
+      heading2: 'Cultura Viva de India',
+      all_link: 'Ver Calendario Completo',
     },
   },
 };

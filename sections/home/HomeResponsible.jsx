@@ -4,7 +4,7 @@ import { responsibleTourism } from '@/data/siteContent';
 import { useLang } from '@/lib/LanguageContext';
 
 export default function HomeResponsible() {
-  const { t } = useLang();
+  const { t, localized } = useLang();
   return (
     /*
       Unified white section — outer background, image column and text column
@@ -108,11 +108,11 @@ export default function HomeResponsible() {
             >
               <p className="font-serif text-base italic leading-relaxed"
                 style={{ color: 'var(--color-text-muted)' }}>
-                &ldquo;{responsibleTourism.statement}&rdquo;
+                &ldquo;{localized(responsibleTourism.statement)}&rdquo;
               </p>
             </blockquote>
 
-            <p className="body-text">{responsibleTourism.note}</p>
+            <p className="body-text">{localized(responsibleTourism.note)}</p>
           </div>
 
         </div>

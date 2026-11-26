@@ -9,7 +9,7 @@ export default function ExperiencesHero() {
       className="hero-header-clearance"
       style={{
         position:   'relative',
-        minHeight:  'clamp(380px, 58vh, 640px)',
+        minHeight:  'clamp(480px, 68vh, 700px)',
         display:    'flex',
         alignItems: 'flex-end',
         overflow:   'hidden',

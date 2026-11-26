@@ -34,7 +34,7 @@ function ContactContent() {
         className="hero-header-clearance"
         style={{
           position: 'relative',
-          minHeight: 'clamp(360px, 50vh, 540px)',
+          minHeight: 'clamp(480px, 68vh, 700px)',
           display: 'flex',
           alignItems: 'flex-end',
           overflow: 'hidden',

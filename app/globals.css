@@ -633,6 +633,19 @@
   }
 }
 
+/* ── Gallery tile — disable zoom on reduced-motion ────────────���─────
+   GalleryTile uses inline style transform on hover.
+   This rule disables image scale transforms site-wide under
+   prefers-reduced-motion (supplements the global transition reset above).
+──────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  /* Gallery and carousel image scale */
+  img {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 /* ── Hide scrollbar (mobile sliders) ───────────────────────────── */
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }

@@ -10,6 +10,7 @@ const NAV_LINKS_KEYS = [
   { href: '/about',         key: 'nav.about'        },
   { href: '/tours',         key: 'nav.tours'        },
   { href: '/destinations',  key: 'nav.destinations' },
+  { href: '/gallery',       key: 'nav.gallery'      },
   { href: '/festivals',     key: 'nav.festivals'    },
   { href: '/experiences',   key: 'nav.experiences'  },
   { href: '/contact',       key: 'nav.contact'      },

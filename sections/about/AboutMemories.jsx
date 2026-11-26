@@ -251,7 +251,7 @@ export default function AboutMemories() {
 
   return (
     <section
-      id="memories"
+      id="gallery"
       style={{
         backgroundColor: 'var(--color-surface-alt)',
         paddingTop:      'clamp(56px, 7vw, 96px)',

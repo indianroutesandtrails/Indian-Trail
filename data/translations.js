@@ -17,6 +17,7 @@ export const translations = {
       festivals: 'Festival Calendar',
       experiences: 'Experiences',
       contact: 'Enquire',
+      gallery: 'Gallery',
     },
     // Hero
     hero: {
@@ -481,6 +482,7 @@ export const translations = {
       festivals: 'Calendario de Festivales',
       experiences: 'Experiencias',
       contact: 'Consultar',
+      gallery: 'Galería',
     },
     // Hero
     hero: {

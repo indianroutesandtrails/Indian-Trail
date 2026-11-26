@@ -362,7 +362,7 @@ export default function HomeGallery() {
           textTransform: 'uppercase',
         }}>
           <a
-            href="/about#gallery"
+            href="/gallery"
             style={{
               color:               'var(--color-primary)',
               textDecoration:      'underline',

@@ -28,6 +28,7 @@ export default function sitemap() {
     { path: '/destinations',  priority: 0.85, freq: 'monthly' },
     { path: '/festivals',     priority: 0.85, freq: 'weekly'  },
     { path: '/experiences',   priority: 0.80, freq: 'monthly' },
+    { path: '/gallery',       priority: 0.80, freq: 'monthly' },
     { path: '/contact',       priority: 0.90, freq: 'monthly' },
   ].map(({ path, priority, freq }) => ({
     url:             `${BASE}${path}`,

@@ -301,7 +301,7 @@ export default function GalleryPage() {
         style={{ position: 'relative', minHeight: 'clamp(480px, 68vh, 700px)', display: 'flex', alignItems: 'flex-end', overflow: 'hidden' }}
       >
         <div className="absolute inset-0">
-          <Image src={heroSrc} alt={heroAlt} fill priority className="object-cover" style={{ objectPosition: 'center 55%' }} sizes="100vw" />
+          <Image src={heroSrc} alt={heroAlt} fill priority className="object-cover" style={{ objectPosition: 'center top' }} sizes="100vw" />
           <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(20,34,77,0.90) 0%, rgba(20,34,77,0.40) 55%, transparent 100%)' }} />
           <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(20,34,77,0.55) 0%, transparent 60%)' }} />
         </div>

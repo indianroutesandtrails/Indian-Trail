@@ -191,8 +191,8 @@ function GalleryTile({ img, flatIndex, priority, rowHeight, isMobile, onOpen }) 
   const altText = localized(img.alt);
 
   const wrapStyle = isMobile
-    ? { position: 'relative', aspectRatio: '4/3', overflow: 'hidden', borderRadius: 'var(--radius-control)', cursor: 'pointer' }
-    : { position: 'relative', height: `${rowHeight}px`, overflow: 'hidden', borderRadius: 'var(--radius-control)', cursor: 'pointer' };
+    ? { position: 'relative', aspectRatio: '4/3', overflow: 'hidden', borderRadius: 'var(--radius-control)', cursor: 'pointer', backgroundColor: '#0e1526' }
+    : { position: 'relative', height: `${rowHeight}px`, overflow: 'hidden', borderRadius: 'var(--radius-control)', cursor: 'pointer', backgroundColor: '#0e1526' };
 
   return (
     <div
@@ -212,9 +212,9 @@ function GalleryTile({ img, flatIndex, priority, rowHeight, isMobile, onOpen }) 
         fill
         priority={priority}
         loading={priority ? 'eager' : 'lazy'}
-        className="object-cover"
         style={{
-          transform: hov ? 'scale(1.04)' : 'scale(1)',
+          objectFit: 'contain',
+          transform: hov ? 'scale(1.02)' : 'scale(1)',
           transition: 'transform 500ms cubic-bezier(0.4,0,0.2,1)',
         }}
         sizes="(max-width:767px) 100vw, (max-width:1023px) 50vw, 33vw"
